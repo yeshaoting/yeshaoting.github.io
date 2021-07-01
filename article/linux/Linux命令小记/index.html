@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="yeshaoting" />
+
+
+
+<meta name="description" content="一、awk命令1. 删除重复的、非连续的行1&#96;awk &amp;#x27;! a[$0]++&amp;#x27;&#96;   2. awk使用特殊分隔符分隔列1echo &quot;192.168.102.134&quot; | awk -F . &amp;#x27;&amp;#123;print $4&amp;#125;&amp;#x27;   二、sed命令1. 截取程序日志中某个时间范围内的文本1sed -n &amp;#x27;&#x2F;^2015-0">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux命令小记">
+<meta property="og:url" content="http://yeshaoting.cn/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/index.html">
+<meta property="og:site_name" content="芳草地">
+<meta property="og:description" content="一、awk命令1. 删除重复的、非连续的行1&#96;awk &amp;#x27;! a[$0]++&amp;#x27;&#96;   2. awk使用特殊分隔符分隔列1echo &quot;192.168.102.134&quot; | awk -F . &amp;#x27;&amp;#123;print $4&amp;#125;&amp;#x27;   二、sed命令1. 截取程序日志中某个时间范围内的文本1sed -n &amp;#x27;&#x2F;^2015-0">
+<meta property="og:locale">
+<meta property="og:image" content="http://yeshaoting.cn/asserts/images/logo/ubuntu.png">
+<meta property="article:published_time" content="2016-01-15T10:02:00.000Z">
+<meta property="article:modified_time" content="2021-07-01T04:25:31.000Z">
+<meta property="article:author" content="yeshaoting">
+<meta property="article:tag" content="小记">
+<meta property="article:tag" content="命令">
+<meta property="article:tag" content="ubuntu">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yeshaoting.cn/asserts/images/logo/ubuntu.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="芳草地" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Linux命令小记 | 芳草地</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?7b8ea756d29e27c324bd3aba722c4a75";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="4">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>个人签名</li>
+                        
+                        
+                        <li>最近访客</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" rel="noopener" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angularjs/" rel="tag">angularjs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aop/" rel="tag">aop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cache/" rel="tag">cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/charles/" rel="tag">charles</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chrome%E6%8F%92%E4%BB%B6/" rel="tag">chrome插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/el/" rel="tag">el</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/" rel="tag">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innotop/" rel="tag">innotop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/issue/" rel="tag">issue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javadoc/" rel="tag">javadoc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jenkins/" rel="tag">jenkins</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jquery/" rel="tag">jquery</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%B1%BB%E5%BA%93/" rel="tag">js类库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/" rel="tag">mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mvc/" rel="tag">mvc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/placeholder/" rel="tag">placeholder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prism/" rel="tag">prism</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/samba/" rel="tag">samba</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssh/" rel="tag">ssh</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sublime/" rel="tag">sublime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/taglib/" rel="tag">taglib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tomcat/" rel="tag">tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu/" rel="tag">ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/velocity/" rel="tag">velocity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xtrafinder/" rel="tag">xtrafinder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%94%E7%AC%94/" rel="tag">五笔</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E4%BA%AB%E4%BB%A3%E7%A0%81/" rel="tag">分享代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag">命令</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E8%AE%B0/" rel="tag">小记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%8F%E5%88%97%E5%8F%B7/" rel="tag">序列号</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E7%BB%B4%E8%84%91%E5%9B%BE/" rel="tag">思维脑图</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" rel="tag">性能测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag">索引</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA/" rel="tag">装机</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://jarg.iteye.com">爪哇哥的爪哇岛</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com">卢松松博客</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com/daohang">博客大全</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.cnhostus.com">HOSTUS</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.iwwenbo.com/">容休博客</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">只求成为一名靠谱的码农</div>
+                </section>
+                
+
+                
+                <section class="switch-part switch-part5">
+                    <div class="widget visitor" id="js-visitor">
+                       <ul class="ds-recent-visitors" data-num-items="16" data-avatar-size="48"></ul>
+
+                    </div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="个人签名"/>
+</nav>
+      <div class="body-wrap"><article id="post-article/linux/Linux命令小记" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/" class="article-date">
+      <time datetime="2016-01-15T10:02:00.000Z" itemprop="datePublished">2016-01-15</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux命令小记
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/">工具软件</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ubuntu/" rel="tag">ubuntu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag">命令</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B0%8F%E8%AE%B0/" rel="tag">小记</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <img src="/asserts/images/logo/ubuntu.png" class="img-logo img-center" />
+
+
+<h2 id="一、awk命令"><a href="#一、awk命令" class="headerlink" title="一、awk命令"></a>一、awk命令</h2><h3 id="1-删除重复的、非连续的行"><a href="#1-删除重复的、非连续的行" class="headerlink" title="1. 删除重复的、非连续的行"></a>1. 删除重复的、非连续的行</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">`awk &#x27;! a[$0]++&#x27;`</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="2-awk使用特殊分隔符分隔列"><a href="#2-awk使用特殊分隔符分隔列" class="headerlink" title="2. awk使用特殊分隔符分隔列"></a>2. awk使用特殊分隔符分隔列</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;192.168.102.134&quot; | awk -F . &#x27;&#123;print $4&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="二、sed命令"><a href="#二、sed命令" class="headerlink" title="二、sed命令"></a>二、sed命令</h2><h3 id="1-截取程序日志中某个时间范围内的文本"><a href="#1-截取程序日志中某个时间范围内的文本" class="headerlink" title="1. 截取程序日志中某个时间范围内的文本"></a>1. 截取程序日志中某个时间范围内的文本</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#x27;/^2015-05-14 15:32:30/,/^2015-05-14 16:12:09/p&#x27; access_log &gt; log.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-去除空白行的sed"><a href="#2-去除空白行的sed" class="headerlink" title="2. 去除空白行的sed"></a>2. 去除空白行的sed</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SECRET=`sed &#x27;/^$/d&#x27; file.txt | head -1`</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-通过sed替换字特殊字符"><a href="#3-通过sed替换字特殊字符" class="headerlink" title="3. 通过sed替换字特殊字符"></a>3. 通过sed替换字特殊字符</h3><p><code>echo &quot;12,34,56&quot; | sed &#39;s/,/ /g&#39;</code></p>
+<h3 id="4-通过sed替换二者之间的字符串内容"><a href="#4-通过sed替换二者之间的字符串内容" class="headerlink" title="4. 通过sed替换二者之间的字符串内容"></a>4. 通过sed替换二者之间的字符串内容</h3><p>文本内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">server</span>   <span class="attr">id</span>=<span class="string">&quot;film-web&quot;</span>   <span class="attr">address</span>=<span class="string">&quot;127.0.0.1&quot;</span> <span class="attr">port</span>=<span class="string">&quot;6881&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">server</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -n &quot;s/\( *server.*port=\&quot;\).*\(\&quot;.*\)/\1abc\2/p&quot; 1.txt</span><br><span class="line">sed -n &quot;s/\( *server.*address=\&quot;\).*\(\&quot; *port\)/\1abc\2/p&quot; 1.txt</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：sed里，使用圆括号括起来的内容，可以看做是变量。使用\1和\2来输出。<br><strong>参见</strong>：<a target="_blank" rel="noopener" href="http://coolshell.cn/articles/9104.html">http://coolshell.cn/articles/9104.html</a> 圆括号匹配</p>
+<h3 id="5-从替换开始匹配行到行尾或结束匹配行区间内替换内容"><a href="#5-从替换开始匹配行到行尾或结束匹配行区间内替换内容" class="headerlink" title="5. 从替换开始匹配行到行尾或结束匹配行区间内替换内容"></a>5. 从替换开始匹配行到行尾或结束匹配行区间内替换内容</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sed -i &quot;/ *server *id=/,\$&#123;s/\(\&lt;watchdog-port&gt;\).*\(&lt;\/watchdog-port&gt;\)/\18000\2/g;&#125;&quot; resin.conf</span><br><span class="line">sed &quot;/ *server *id=\&quot;/,/&lt;\/server&gt;/&#123;s/\(\&lt;watchdog-port&gt;\).*\(&lt;\/watchdog-port&gt;\)/\18888\2/g;&#125;&quot; resin.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：每个匹配前后都需要加/，见上面红色部分。$表示最后一行，不需要加/</p>
+<h2 id="三、grep命令"><a href="#三、grep命令" class="headerlink" title="三、grep命令"></a>三、grep命令</h2><h3 id="1-查找特定文件指定字符串"><a href="#1-查找特定文件指定字符串" class="headerlink" title="1. 查找特定文件指定字符串"></a>1. 查找特定文件指定字符串</h3><p><code>grep &quot;no object DCH for MIME type multipart/mixed&quot; *.log &gt; MIME.log</code></p>
+<h3 id="2-查找文本内容"><a href="#2-查找文本内容" class="headerlink" title="2. 查找文本内容"></a>2. 查找文本内容</h3><p><code>grep -i -r --exclude=*.jar --exclude=*.log* noah .</code></p>
+<h3 id="3-查看tomcat日志特定内容"><a href="#3-查看tomcat日志特定内容" class="headerlink" title="3. 查看tomcat日志特定内容"></a>3. 查看tomcat日志特定内容</h3><p><code>tail -f catalina.out | grep timecost | grep FamilyController | awk &#39;&#123;if($10 &gt; 100) print $0&#125;&#39;</code></p>
+<h3 id="4-查看tomcat某天日志"><a href="#4-查看tomcat某天日志" class="headerlink" title="4. 查看tomcat某天日志"></a>4. 查看tomcat某天日志</h3><p><code>tail -800000 catalina.out | grep 2014-06-30 &gt; 2014-06-30.log</code></p>
+<h3 id="5-记录统计"><a href="#5-记录统计" class="headerlink" title="5. 记录统计"></a>5. 记录统计</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">grep timecost file.txt | wc -l</span><br><span class="line">ls | wc -l</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-grep与或非"><a href="#6-grep与或非" class="headerlink" title="6. grep与或非"></a>6. grep与或非</h3><h4 id="与操作"><a href="#与操作" class="headerlink" title="与操作"></a>与操作</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grep -E &#x27;pattern1.*pattern2&#x27; file.txt # in that order</span><br><span class="line">grep -E &#x27;pattern1.*pattern2|pattern2.*pattern1&#x27; file.txt # in any order</span><br><span class="line">grep &#x27;pattern1&#x27; file.txt | grep &#x27;pattern2&#x27; # in any order</span><br></pre></td></tr></table></figure>
+
+<h4 id="或操作"><a href="#或操作" class="headerlink" title="或操作"></a>或操作</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;pattern1\|pattern2&quot; file.txt</span><br><span class="line">grep -E &quot;pattern1|pattern2&quot; file.txt</span><br><span class="line">grep -e pattern1 -e pattern2 file.txt</span><br><span class="line">egrep &quot;pattern1|pattern2&quot; file.txt</span><br></pre></td></tr></table></figure>
+
+<h4 id="非操作"><a href="#非操作" class="headerlink" title="非操作"></a>非操作</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -v <span class="string">&#x27;pattern1&#x27;</span> file.txt</span><br></pre></td></tr></table></figure>
+
+<p>摘自：<a target="_blank" rel="noopener" href="http://www.shellhacks.com/en/Using-BASH-Grep-OR-Grep-AND-Grep-NOT-Operators">Using BASH “Grep OR / Grep AND / Grep NOT” Operators</a></p>
+<h3 id="7-递归查询不包含指定内容的文件"><a href="#7-递归查询不包含指定内容的文件" class="headerlink" title="7. 递归查询不包含指定内容的文件"></a>7. 递归查询不包含指定内容的文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep -irL &quot;date:&quot; file.txt</span><br></pre></td></tr></table></figure>
+
+
+<span id="more"></span>
+
+
+<h2 id="四、ps命令"><a href="#四、ps命令" class="headerlink" title="四、ps命令"></a>四、ps命令</h2><h3 id="1-cpu-内存占用率排序"><a href="#1-cpu-内存占用率排序" class="headerlink" title="1. cpu/内存占用率排序"></a>1. cpu/内存占用率排序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps auxw --sort=%cpu</span><br><span class="line">ps auxw --sort=%mem</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-查看端口占用"><a href="#2-查看端口占用" class="headerlink" title="2. 查看端口占用"></a>2. 查看端口占用</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lsof -i:8080</span><br><span class="line">ps -aux | grep java</span><br><span class="line">ps -aux | grep pid</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、kill命令"><a href="#五、kill命令" class="headerlink" title="五、kill命令"></a>五、kill命令</h2><h3 id="1-批量关闭进程"><a href="#1-批量关闭进程" class="headerlink" title="1. 批量关闭进程"></a>1. 批量关闭进程</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 `ps -ef | grep QQ | grep -v <span class="string">&#x27;grep&#x27;</span> | awk &#123;<span class="string">&#x27;print $2&#x27;</span>&#125;`</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-进程批量中止"><a href="#2-进程批量中止" class="headerlink" title="2. 进程批量中止"></a>2. 进程批量中止</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -9 `ps -ef | grep QQ | grep -v grep | awk &#123;<span class="string">&#x27;print $2&#x27;</span>&#125;`</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、vim命令"><a href="#六、vim命令" class="headerlink" title="六、vim命令"></a>六、vim命令</h2><h3 id="1-vim显示-隐藏行号"><a href="#1-vim显示-隐藏行号" class="headerlink" title="1. vim显示/隐藏行号"></a>1. vim显示/隐藏行号</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:<span class="keyword">set</span> <span class="keyword">nu</span> 或 :<span class="keyword">set</span> <span class="keyword">number</span></span><br><span class="line">:<span class="keyword">set</span> nonu 或 :<span class="keyword">set</span> nonumber</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-vim替换指定区域匹配文本"><a href="#2-vim替换指定区域匹配文本" class="headerlink" title="2. vim替换指定区域匹配文本"></a>2. vim替换指定区域匹配文本</h3><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">: <span class="number">41</span>,<span class="number">57</span> s/<span class="number">10.13</span>.<span class="number">92.143</span>/<span class="number">10.13</span>.<span class="number">92.157</span>/g</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、date命令"><a href="#七、date命令" class="headerlink" title="七、date命令"></a>七、date命令</h2><h3 id="1-打印时间"><a href="#1-打印时间" class="headerlink" title="1. 打印时间"></a>1. 打印时间</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> `date <span class="string">&#x27;+%Y-%m-%d %H:%M:%S&#x27;</span>`</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-时间显示"><a href="#2-时间显示" class="headerlink" title="2. 时间显示"></a>2. 时间显示</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date</span><br><span class="line">date <span class="string">&#x27;+%Y-%m-%d %H:%M:%S&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="八、cal命令"><a href="#八、cal命令" class="headerlink" title="八、cal命令"></a>八、cal命令</h2><h3 id="1-当年当月"><a href="#1-当年当月" class="headerlink" title="1. 当年当月"></a>1. 当年当月</h3><p><code>cal</code></p>
+<h3 id="2-某年日历"><a href="#2-某年日历" class="headerlink" title="2. 某年日历"></a>2. 某年日历</h3><p><code>cal 2015</code></p>
+<h3 id="3-某年某月"><a href="#3-某年某月" class="headerlink" title="3. 某年某月"></a>3. 某年某月</h3><p><code>cal 12 2015</code></p>
+<h2 id="九、ls命令"><a href="#九、ls命令" class="headerlink" title="九、ls命令"></a>九、ls命令</h2><h3 id="1-linux-下查看文件个数及大小"><a href="#1-linux-下查看文件个数及大小" class="headerlink" title="1. linux 下查看文件个数及大小"></a>1. linux 下查看文件个数及大小</h3><p><code>ls -l |grep &quot;^-&quot;|wc -l 或 find ./company -type f | wc -l</code></p>
+<h3 id="2-查看某文件夹下文件的个数，包括子文件夹里的。"><a href="#2-查看某文件夹下文件的个数，包括子文件夹里的。" class="headerlink" title="2. 查看某文件夹下文件的个数，包括子文件夹里的。"></a>2. 查看某文件夹下文件的个数，包括子文件夹里的。</h3><p><code>ls -lR|grep &quot;^-&quot;|wc -l</code></p>
+<h3 id="3-查看某文件夹下文件夹的个数，包括子文件夹里的。"><a href="#3-查看某文件夹下文件夹的个数，包括子文件夹里的。" class="headerlink" title="3. 查看某文件夹下文件夹的个数，包括子文件夹里的。"></a>3. 查看某文件夹下文件夹的个数，包括子文件夹里的。</h3><p><code>ls -lR|grep &quot;^d&quot;|wc -l</code></p>
+<h3 id="4-按修改先后，列出文件"><a href="#4-按修改先后，列出文件" class="headerlink" title="4. 按修改先后，列出文件"></a>4. 按修改先后，列出文件</h3><p><code>ls -lt</code></p>
+<h2 id="十、tar命令"><a href="#十、tar命令" class="headerlink" title="十、tar命令"></a>十、tar命令</h2><h3 id="1-tar打包文件，exclude选项排除指定文件或目录"><a href="#1-tar打包文件，exclude选项排除指定文件或目录" class="headerlink" title="1. tar打包文件，exclude选项排除指定文件或目录"></a>1. tar打包文件，exclude选项排除指定文件或目录</h3><p><code>tar zcvf ../fetch-wiki.tar.gz * --exclude=*.txt* --exclude=logs</code></p>
+<h2 id="十一、rm命令"><a href="#十一、rm命令" class="headerlink" title="十一、rm命令"></a>十一、rm命令</h2><h3 id="1-删除-开头的文件"><a href="#1-删除-开头的文件" class="headerlink" title="1. 删除 - 开头的文件"></a>1. 删除 - 开头的文件</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rm --  -filename</span><br><span class="line">rm -- ./-filename</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="十二、echo命令"><a href="#十二、echo命令" class="headerlink" title="十二、echo命令"></a>十二、echo命令</h2><h3 id="1-echo输出制表符方式"><a href="#1-echo输出制表符方式" class="headerlink" title="1. echo输出制表符方式"></a>1. echo输出制表符方式</h3><p><code>echo -e &quot;123\t345&quot;</code></p>
+<h3 id="2-shell换行"><a href="#2-shell换行" class="headerlink" title="2. shell换行"></a>2. shell换行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> -e <span class="string">&quot;123\n34&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：-e 表示特殊处理字符串里的特殊字符。</p>
+<h2 id="十三、tail语法"><a href="#十三、tail语法" class="headerlink" title="十三、tail语法"></a>十三、tail语法</h2><h3 id="1-查找特定字符串在文件中出现位置"><a href="#1-查找特定字符串在文件中出现位置" class="headerlink" title="1. 查找特定字符串在文件中出现位置"></a>1. 查找特定字符串在文件中出现位置</h3><p><code>tail -2000000 catalina.out | cat -n | grep &quot;2014-07-10&quot; | head  -2 (对于出现在文末)</code></p>
+<h2 id="十四、shell语法"><a href="#十四、shell语法" class="headerlink" title="十四、shell语法"></a>十四、shell语法</h2><h3 id="1-批量解压zip文件"><a href="#1-批量解压zip文件" class="headerlink" title="1. 批量解压zip文件"></a>1. 批量解压zip文件</h3><p><code>for z in ./*.zip; do unzip -o $z -d ./peixun-logger ; done;</code></p>
+<h3 id="2-判断shell脚本输入参数个数"><a href="#2-判断shell脚本输入参数个数" class="headerlink" title="2. 判断shell脚本输入参数个数"></a>2. 判断shell脚本输入参数个数</h3><p><code>if [ $# -eq 0 ]; then</code></p>
+<h3 id="3-逐行读取文本文件的-shell-脚本"><a href="#3-逐行读取文本文件的-shell-脚本" class="headerlink" title="3. 逐行读取文本文件的 shell 脚本"></a>3. 逐行读取文本文件的 shell 脚本</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while read line</span><br><span class="line">do</span><br><span class="line">echo $line</span><br><span class="line">done &lt; $1</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-for循环"><a href="#4-for循环" class="headerlink" title="4. for循环"></a>4. for循环</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for index in &#123;1..31&#125;</span><br><span class="line">do</span><br><span class="line">    ……</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-shell注释"><a href="#5-shell注释" class="headerlink" title="5. shell注释"></a>5. shell注释</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:&amp;lt;&amp;lt;comment</span><br><span class="line">这里是个注释哈。</span><br><span class="line">comment</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-获取shell脚本位置-当前脚本目录"><a href="#6-获取shell脚本位置-当前脚本目录" class="headerlink" title="6. 获取shell脚本位置/当前脚本目录"></a>6. 获取shell脚本位置/当前脚本目录</h3><p>不能解决软链接问题：<code>$(cd &quot;$(dirname &quot;$0&quot;)&quot;; pwd)</code><br>最靠谱，能处理软链接的情况以及source加载脚本的情况：<code>echo $( cd &quot;$( dirname &quot;$&#123;BASH_SOURCE[0]&#125;&quot; )&quot; &amp;&amp; pwd )</code></p>
+<h3 id="7-查看当前bash-shell版本"><a href="#7-查看当前bash-shell版本" class="headerlink" title="7. 查看当前bash shell版本"></a>7. 查看当前bash shell版本</h3><p>echo $BASH_VERSION</p>
+<h3 id="8-理解-bashrc-和-profile"><a href="#8-理解-bashrc-和-profile" class="headerlink" title="8. 理解 bashrc 和 profile"></a>8. 理解 bashrc 和 profile</h3><p>参见：<a target="_blank" rel="noopener" href="https://wido.me/sunteya/understand-bashrc-and-profile">理解 bashrc 和 profile</a></p>
+<h4 id="login-shell-和-no-login-shell"><a href="#login-shell-和-no-login-shell" class="headerlink" title="login shell 和 no-login shell"></a>login shell 和 no-login shell</h4><p>“login shell” 代表用户登入, 比如使用 “su -“ 命令, 或者用 ssh 连接到某一个服务器上, 都会使用该用户默认 shell 启动 login shell 模式.<br>该模式下的 shell 会去自动执行 /etc/profile 和 ~/.profile 文件, 但不会执行任何的 bashrc 文件, 所以一般再 /etc/profile 或者 ~/.profile 里我们会手动去 source bashrc 文件.<br>而 no-login shell 的情况是我们在终端下直接输入 bash 或者 bash -c “CMD” 来启动的 shell.<br>该模式下是不会自动去运行任何的 profile 文件.</p>
+<h4 id="interactive-shell-和-non-interactive-shell"><a href="#interactive-shell-和-non-interactive-shell" class="headerlink" title="interactive shell 和 non-interactive shell"></a>interactive shell 和 non-interactive shell</h4><p>interactive shell 是交互式shell, 顾名思义就是用来和用户交互的, 提供了命令提示符可以输入命令.<br>该模式下会存在一个叫 PS1 的环境变量, 如果还不是 login shell 的则会去 source /etc/bash.bashrc 和 ~/.bashrc 文件<br>non-interactive shell 则一般是通过 bash -c “CMD” 来执行的bash.<br>该模式下不会执行任何的 rc 文件, 不过还存在一种特殊情况这个我之后详细讲述</p>
+<h4 id="bashrc-和-profile-的区别"><a href="#bashrc-和-profile-的区别" class="headerlink" title="bashrc 和 profile 的区别"></a>bashrc 和 profile 的区别</h4><p>看了之前那么多种状态组合, 最关键的问题是, 究竟 bashrc 和 profile 有什么区别呢?</p>
+<p><strong>profile</strong><br>其实看名字就能了解大概了, profile 是某个用户唯一的用来设置环境变量的地方, 因为用户可以有多个 shell 比如 bash, sh, zsh 之类的, 但像环境变量这种其实只需要在统一的一个地方初始化就可以了, 而这就是 profile.</p>
+<p><strong>bashrc</strong><br>bashrc 也是看名字就知道, 是专门用来给 bash 做初始化的比如用来初始化 bash 的设置, bash 的代码补全, bash 的别名, bash 的颜色. 以此类推也就还会有 shrc, zshrc 这样的文件存在了, 只是 bash 太常用了而已.</p>
+<h3 id="9-上条命令是否成功执行"><a href="#9-上条命令是否成功执行" class="headerlink" title="9. 上条命令是否成功执行"></a>9. 上条命令是否成功执行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">EXCODE=$?</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$EXCODE</span>&quot;</span> == <span class="string">&quot;0&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;O.K&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;NOT O.K&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="10-加载配置"><a href="#10-加载配置" class="headerlink" title="10. 加载配置"></a>10. 加载配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">. slave.conf</span><br><span class="line">source slave.conf</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：slave.conf里的值格式为K=V</p>
+<h3 id="11-执行字符串命令"><a href="#11-执行字符串命令" class="headerlink" title="11. 执行字符串命令"></a>11. 执行字符串命令</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SLAVE_PID_COMMAND=&quot;ps -ef | grep $SECRET_ID | grep -v grep | awk &#x27;&#123;print \$2&#125;&#x27;&quot;</span><br><span class="line">SLAVE_PID=$(eval $SLAVE_PID_COMMAND)</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：<br>$要转义处理执行<br>执行字符串里的命令，使用eval命令<br>获取命令执行结果，可以用$()把命令包里来。</p>
+<h3 id="12-获取某文件路径文件名"><a href="#12-获取某文件路径文件名" class="headerlink" title="12. 获取某文件路径文件名"></a>12. 获取某文件路径文件名</h3><p>basename soft_install/jenkins-job-install/archive/jdk1.7.0_60.tar.gz .tar.gz =&gt; jdk1.7.0_60</p>
+<h2 id="十五、find命令"><a href="#十五、find命令" class="headerlink" title="十五、find命令"></a>十五、find命令</h2><h3 id="1-删除所有文件名包含Ulysses-Group的文件"><a href="#1-删除所有文件名包含Ulysses-Group的文件" class="headerlink" title="1. 删除所有文件名包含Ulysses-Group的文件"></a>1. 删除所有文件名包含Ulysses-Group的文件</h3><p><code>find . -name &quot;*Ulysses-Group*&quot; -exec rm -rf &#123;&#125; \;</code></p>
+<h2 id="十六、其他命令"><a href="#十六、其他命令" class="headerlink" title="十六、其他命令"></a>十六、其他命令</h2><h3 id="1-磁盘格式转换为ntfs-会格式化磁盘"><a href="#1-磁盘格式转换为ntfs-会格式化磁盘" class="headerlink" title="1. 磁盘格式转换为ntfs( 会格式化磁盘 )"></a>1. 磁盘格式转换为ntfs( 会格式化磁盘 )</h3><p><code>convert X: /fs:ntfs</code></p>
+<h3 id="2-命令后台处理"><a href="#2-命令后台处理" class="headerlink" title="2. 命令后台处理"></a>2. 命令后台处理</h3><p><code>nohup command &amp;</code></p>
+<h3 id="3-重启ibus"><a href="#3-重启ibus" class="headerlink" title="3. 重启ibus"></a>3. 重启ibus</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">killall ibus-daemon</span><br><span class="line">ibus-daemon -drx</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-查看用户使用的shell版本"><a href="#4-查看用户使用的shell版本" class="headerlink" title="4. 查看用户使用的shell版本"></a>4. 查看用户使用的shell版本</h3><p>finger [USERNAME]</p>
+<h3 id="5-tee"><a href="#5-tee" class="headerlink" title="5. tee"></a>5. tee</h3><p>重定向到文件并打印到屏幕</p>
+<p>参见：<a target="_blank" rel="noopener" href="http://blog.csdn.net/love_gaohz/article/details/8100808">tee–重定向到文件并打印到屏幕</a></p>
+
+      
+    </div>
+
+    
+      
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">Linux命令小记</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2016-01-15, 18:02:00</p>
+        <p><span>最后更新:</span>2021-07-01, 12:25:31</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/" title="Linux命令小记">http://yeshaoting.cn/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yeshaoting.cn/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    
+
+    
+  </div>
+  
+    
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/article/mac/%E6%89%93%E9%80%A0%E4%B8%AA%E4%BA%BA%E4%B8%93%E5%B1%9ESublime%20Text%203/">
+                    打造个人专属Sublime Text 3
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/article/mac/Mac%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">
+                    Mac装机软件
+                </a>
+            </div>
+        
+    </nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81awk%E5%91%BD%E4%BB%A4"><span class="toc-text">一、awk命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%A0%E9%99%A4%E9%87%8D%E5%A4%8D%E7%9A%84%E3%80%81%E9%9D%9E%E8%BF%9E%E7%BB%AD%E7%9A%84%E8%A1%8C"><span class="toc-text">1. 删除重复的、非连续的行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-awk%E4%BD%BF%E7%94%A8%E7%89%B9%E6%AE%8A%E5%88%86%E9%9A%94%E7%AC%A6%E5%88%86%E9%9A%94%E5%88%97"><span class="toc-text">2. awk使用特殊分隔符分隔列</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81sed%E5%91%BD%E4%BB%A4"><span class="toc-text">二、sed命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%88%AA%E5%8F%96%E7%A8%8B%E5%BA%8F%E6%97%A5%E5%BF%97%E4%B8%AD%E6%9F%90%E4%B8%AA%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4%E5%86%85%E7%9A%84%E6%96%87%E6%9C%AC"><span class="toc-text">1. 截取程序日志中某个时间范围内的文本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8E%BB%E9%99%A4%E7%A9%BA%E7%99%BD%E8%A1%8C%E7%9A%84sed"><span class="toc-text">2. 去除空白行的sed</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%9A%E8%BF%87sed%E6%9B%BF%E6%8D%A2%E5%AD%97%E7%89%B9%E6%AE%8A%E5%AD%97%E7%AC%A6"><span class="toc-text">3. 通过sed替换字特殊字符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E9%80%9A%E8%BF%87sed%E6%9B%BF%E6%8D%A2%E4%BA%8C%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%86%85%E5%AE%B9"><span class="toc-text">4. 通过sed替换二者之间的字符串内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E4%BB%8E%E6%9B%BF%E6%8D%A2%E5%BC%80%E5%A7%8B%E5%8C%B9%E9%85%8D%E8%A1%8C%E5%88%B0%E8%A1%8C%E5%B0%BE%E6%88%96%E7%BB%93%E6%9D%9F%E5%8C%B9%E9%85%8D%E8%A1%8C%E5%8C%BA%E9%97%B4%E5%86%85%E6%9B%BF%E6%8D%A2%E5%86%85%E5%AE%B9"><span class="toc-text">5. 从替换开始匹配行到行尾或结束匹配行区间内替换内容</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81grep%E5%91%BD%E4%BB%A4"><span class="toc-text">三、grep命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9F%A5%E6%89%BE%E7%89%B9%E5%AE%9A%E6%96%87%E4%BB%B6%E6%8C%87%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-text">1. 查找特定文件指定字符串</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9F%A5%E6%89%BE%E6%96%87%E6%9C%AC%E5%86%85%E5%AE%B9"><span class="toc-text">2. 查找文本内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8Btomcat%E6%97%A5%E5%BF%97%E7%89%B9%E5%AE%9A%E5%86%85%E5%AE%B9"><span class="toc-text">3. 查看tomcat日志特定内容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8Btomcat%E6%9F%90%E5%A4%A9%E6%97%A5%E5%BF%97"><span class="toc-text">4. 查看tomcat某天日志</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%AE%B0%E5%BD%95%E7%BB%9F%E8%AE%A1"><span class="toc-text">5. 记录统计</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-grep%E4%B8%8E%E6%88%96%E9%9D%9E"><span class="toc-text">6. grep与或非</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8E%E6%93%8D%E4%BD%9C"><span class="toc-text">与操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%88%96%E6%93%8D%E4%BD%9C"><span class="toc-text">或操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%9E%E6%93%8D%E4%BD%9C"><span class="toc-text">非操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E9%80%92%E5%BD%92%E6%9F%A5%E8%AF%A2%E4%B8%8D%E5%8C%85%E5%90%AB%E6%8C%87%E5%AE%9A%E5%86%85%E5%AE%B9%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-text">7. 递归查询不包含指定内容的文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81ps%E5%91%BD%E4%BB%A4"><span class="toc-text">四、ps命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-cpu-%E5%86%85%E5%AD%98%E5%8D%A0%E7%94%A8%E7%8E%87%E6%8E%92%E5%BA%8F"><span class="toc-text">1. cpu&#x2F;内存占用率排序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9F%A5%E7%9C%8B%E7%AB%AF%E5%8F%A3%E5%8D%A0%E7%94%A8"><span class="toc-text">2. 查看端口占用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81kill%E5%91%BD%E4%BB%A4"><span class="toc-text">五、kill命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%89%B9%E9%87%8F%E5%85%B3%E9%97%AD%E8%BF%9B%E7%A8%8B"><span class="toc-text">1. 批量关闭进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%BF%9B%E7%A8%8B%E6%89%B9%E9%87%8F%E4%B8%AD%E6%AD%A2"><span class="toc-text">2. 进程批量中止</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81vim%E5%91%BD%E4%BB%A4"><span class="toc-text">六、vim命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-vim%E6%98%BE%E7%A4%BA-%E9%9A%90%E8%97%8F%E8%A1%8C%E5%8F%B7"><span class="toc-text">1. vim显示&#x2F;隐藏行号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-vim%E6%9B%BF%E6%8D%A2%E6%8C%87%E5%AE%9A%E5%8C%BA%E5%9F%9F%E5%8C%B9%E9%85%8D%E6%96%87%E6%9C%AC"><span class="toc-text">2. vim替换指定区域匹配文本</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81date%E5%91%BD%E4%BB%A4"><span class="toc-text">七、date命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%89%93%E5%8D%B0%E6%97%B6%E9%97%B4"><span class="toc-text">1. 打印时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%97%B6%E9%97%B4%E6%98%BE%E7%A4%BA"><span class="toc-text">2. 时间显示</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81cal%E5%91%BD%E4%BB%A4"><span class="toc-text">八、cal命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%BD%93%E5%B9%B4%E5%BD%93%E6%9C%88"><span class="toc-text">1. 当年当月</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9F%90%E5%B9%B4%E6%97%A5%E5%8E%86"><span class="toc-text">2. 某年日历</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%90%E5%B9%B4%E6%9F%90%E6%9C%88"><span class="toc-text">3. 某年某月</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B9%9D%E3%80%81ls%E5%91%BD%E4%BB%A4"><span class="toc-text">九、ls命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-linux-%E4%B8%8B%E6%9F%A5%E7%9C%8B%E6%96%87%E4%BB%B6%E4%B8%AA%E6%95%B0%E5%8F%8A%E5%A4%A7%E5%B0%8F"><span class="toc-text">1. linux 下查看文件个数及大小</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%9F%A5%E7%9C%8B%E6%9F%90%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E6%96%87%E4%BB%B6%E7%9A%84%E4%B8%AA%E6%95%B0%EF%BC%8C%E5%8C%85%E6%8B%AC%E5%AD%90%E6%96%87%E4%BB%B6%E5%A4%B9%E9%87%8C%E7%9A%84%E3%80%82"><span class="toc-text">2. 查看某文件夹下文件的个数，包括子文件夹里的。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8B%E6%9F%90%E6%96%87%E4%BB%B6%E5%A4%B9%E4%B8%8B%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E4%B8%AA%E6%95%B0%EF%BC%8C%E5%8C%85%E6%8B%AC%E5%AD%90%E6%96%87%E4%BB%B6%E5%A4%B9%E9%87%8C%E7%9A%84%E3%80%82"><span class="toc-text">3. 查看某文件夹下文件夹的个数，包括子文件夹里的。</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%8C%89%E4%BF%AE%E6%94%B9%E5%85%88%E5%90%8E%EF%BC%8C%E5%88%97%E5%87%BA%E6%96%87%E4%BB%B6"><span class="toc-text">4. 按修改先后，列出文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E3%80%81tar%E5%91%BD%E4%BB%A4"><span class="toc-text">十、tar命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-tar%E6%89%93%E5%8C%85%E6%96%87%E4%BB%B6%EF%BC%8Cexclude%E9%80%89%E9%A1%B9%E6%8E%92%E9%99%A4%E6%8C%87%E5%AE%9A%E6%96%87%E4%BB%B6%E6%88%96%E7%9B%AE%E5%BD%95"><span class="toc-text">1. tar打包文件，exclude选项排除指定文件或目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%80%E3%80%81rm%E5%91%BD%E4%BB%A4"><span class="toc-text">十一、rm命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%A0%E9%99%A4-%E5%BC%80%E5%A4%B4%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-text">1. 删除 - 开头的文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%8C%E3%80%81echo%E5%91%BD%E4%BB%A4"><span class="toc-text">十二、echo命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-echo%E8%BE%93%E5%87%BA%E5%88%B6%E8%A1%A8%E7%AC%A6%E6%96%B9%E5%BC%8F"><span class="toc-text">1. echo输出制表符方式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-shell%E6%8D%A2%E8%A1%8C"><span class="toc-text">2. shell换行</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%B8%89%E3%80%81tail%E8%AF%AD%E6%B3%95"><span class="toc-text">十三、tail语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9F%A5%E6%89%BE%E7%89%B9%E5%AE%9A%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%9C%A8%E6%96%87%E4%BB%B6%E4%B8%AD%E5%87%BA%E7%8E%B0%E4%BD%8D%E7%BD%AE"><span class="toc-text">1. 查找特定字符串在文件中出现位置</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E5%9B%9B%E3%80%81shell%E8%AF%AD%E6%B3%95"><span class="toc-text">十四、shell语法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%89%B9%E9%87%8F%E8%A7%A3%E5%8E%8Bzip%E6%96%87%E4%BB%B6"><span class="toc-text">1. 批量解压zip文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%88%A4%E6%96%ADshell%E8%84%9A%E6%9C%AC%E8%BE%93%E5%85%A5%E5%8F%82%E6%95%B0%E4%B8%AA%E6%95%B0"><span class="toc-text">2. 判断shell脚本输入参数个数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%80%90%E8%A1%8C%E8%AF%BB%E5%8F%96%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E7%9A%84-shell-%E8%84%9A%E6%9C%AC"><span class="toc-text">3. 逐行读取文本文件的 shell 脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-for%E5%BE%AA%E7%8E%AF"><span class="toc-text">4. for循环</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-shell%E6%B3%A8%E9%87%8A"><span class="toc-text">5. shell注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E8%8E%B7%E5%8F%96shell%E8%84%9A%E6%9C%AC%E4%BD%8D%E7%BD%AE-%E5%BD%93%E5%89%8D%E8%84%9A%E6%9C%AC%E7%9B%AE%E5%BD%95"><span class="toc-text">6. 获取shell脚本位置&#x2F;当前脚本目录</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8Dbash-shell%E7%89%88%E6%9C%AC"><span class="toc-text">7. 查看当前bash shell版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E7%90%86%E8%A7%A3-bashrc-%E5%92%8C-profile"><span class="toc-text">8. 理解 bashrc 和 profile</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#login-shell-%E5%92%8C-no-login-shell"><span class="toc-text">login shell 和 no-login shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#interactive-shell-%E5%92%8C-non-interactive-shell"><span class="toc-text">interactive shell 和 non-interactive shell</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#bashrc-%E5%92%8C-profile-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-text">bashrc 和 profile 的区别</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-%E4%B8%8A%E6%9D%A1%E5%91%BD%E4%BB%A4%E6%98%AF%E5%90%A6%E6%88%90%E5%8A%9F%E6%89%A7%E8%A1%8C"><span class="toc-text">9. 上条命令是否成功执行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-%E5%8A%A0%E8%BD%BD%E9%85%8D%E7%BD%AE"><span class="toc-text">10. 加载配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E6%89%A7%E8%A1%8C%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%91%BD%E4%BB%A4"><span class="toc-text">11. 执行字符串命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E8%8E%B7%E5%8F%96%E6%9F%90%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84%E6%96%87%E4%BB%B6%E5%90%8D"><span class="toc-text">12. 获取某文件路径文件名</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E4%BA%94%E3%80%81find%E5%91%BD%E4%BB%A4"><span class="toc-text">十五、find命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6%E5%90%8D%E5%8C%85%E5%90%ABUlysses-Group%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-text">1. 删除所有文件名包含Ulysses-Group的文件</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8D%81%E5%85%AD%E3%80%81%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="toc-text">十六、其他命令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E7%A3%81%E7%9B%98%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%E4%B8%BAntfs-%E4%BC%9A%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%A3%81%E7%9B%98"><span class="toc-text">1. 磁盘格式转换为ntfs( 会格式化磁盘 )</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%91%BD%E4%BB%A4%E5%90%8E%E5%8F%B0%E5%A4%84%E7%90%86"><span class="toc-text">2. 命令后台处理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E9%87%8D%E5%90%AFibus"><span class="toc-text">3. 重启ibus</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8B%E7%94%A8%E6%88%B7%E4%BD%BF%E7%94%A8%E7%9A%84shell%E7%89%88%E6%9C%AC"><span class="toc-text">4. 查看用户使用的shell版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-tee"><span class="toc-text">5. tee</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <!-- <a href="#" class="fa fa-qzone bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a> -->
+            <!-- <a href="#" class="fa fa-renren bds_renren" data-cmd="renren" title="分享到人人网"></a> -->
+            <!-- <a href="#" class="fa fa-tencent-weibo bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a> -->
+            <!-- <a href="#" class="fa fa-count bds_count" data-cmd="count"></a> -->
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"Linux命令小记　| 芳草地　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <div id="comment-box" ></div>
+    <div class="ds-thread" id="ds-thread" data-thread-key="article/linux/Linux命令小记/" data-title="Linux命令小记" data-url="http://yeshaoting.cn/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/"></div>
+    <script>
+        var duoshuoQuery = {short_name:"yeshaoting"};
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            s.async = true; s.charset = 'UTF-8';
+            (d.head || d.body).appendChild(s);
+        }
+
+        
+    </script>
+    
+    <script> loadComment(); </script>
+
+</div>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/article/mac/%E6%89%93%E9%80%A0%E4%B8%AA%E4%BA%BA%E4%B8%93%E5%B1%9ESublime%20Text%203/" title="上一篇: 打造个人专属Sublime Text 3">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/article/mac/Mac%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/" title="下一篇: Mac装机软件">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/article/python/Python%E8%8F%9C%E9%B8%9F%E6%95%99%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 循环语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/soft/tools/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8xmind%E9%B1%BC%E9%AA%A8%E5%A4%B4/">如何使用xmind鱼骨头</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E5%9B%BE%E7%89%87%E5%8D%A0%E4%BD%8D%E7%AC%A6placeholder.js/">图片占位符placeholder.js</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/samba%E6%90%AD%E5%BB%BA/">samba搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/chrome%E6%8F%92%E4%BB%B6%EF%BC%9A%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87%E6%AC%A3%E8%B5%8F/">chrome插件：随机图片欣赏</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Innotop/">命令行监控工具Innotop</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9Fhistory/">设置系统history</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE%E7%B1%BB%E5%BA%93prismjs/">代码高亮类库prismjs</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/yelee%E4%B8%BB%E9%A2%98%E6%9C%80%E8%BF%91%E8%AE%BF%E5%AE%A2%E6%8C%82%E4%BB%B6/">yelee主题最近访客挂件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/java%E8%8C%83%E5%9B%B4%E6%98%A0%E5%B0%84/">java范围映射</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E9%80%9A%E8%BF%87InnoDB%E7%9B%91%E6%8E%A7%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90%E9%94%81%E5%8D%A0%E7%94%A8/">通过InnoDB监控状态分析锁占用</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%BC%80%E5%90%AFInnoDB%E7%9B%91%E6%8E%A7/">开启InnoDB监控</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6/">mysql前缀索引大小限制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/">mysql insert锁机制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/request%20entity%20too%20large/">request entity too large</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/XtraFinder%20in%2010.11/">XtraFinder in 10.11</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E4%B8%AD%E6%AD%A2%E9%94%99%E8%AF%AF%E7%9A%84%E5%A4%9A%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C/">中止错误的多行SQL语句执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/xml.etree.ElementTree%E8%A7%A3%E6%9E%90xml/">xml.etree.ElementTree解析xml</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%20520/">python 520</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 条件语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B/">Python菜鸟教程学习笔记 - 数据类型</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Python菜鸟教程学习笔记 - 基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/%E3%80%8A%E8%B7%9F%E8%80%81%E9%BD%90%E5%AD%A6Python%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0/">《跟老齐学Python》学习笔记-数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E6%89%93%E5%8D%B0%E4%B8%AD%E6%96%87%E5%BC%82%E5%B8%B8/">python打印中文异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/Sublime%20Text%203%E5%BA%8F%E5%88%97%E5%8F%B7/">Sublime Text 3序列号</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/jquery%E5%A6%82%E4%BD%95%E4%BC%A0%E8%BE%93json%E6%95%B0%E6%8D%AE/">jquery如何传输json数据</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E5%88%86%E4%BA%AB/">WEB安全渗透分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E5%BE%AA%E7%8E%AF%E6%8C%87%E5%AE%9A%E6%AC%A1%E6%95%B0/">angularjs循环指定次数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E7%94%9F%E6%88%90javadoc%E6%96%87%E6%A1%A3/">生成javadoc文档</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E8%A7%86%E5%9B%BE%E8%B7%B3%E8%BD%AC%E4%B8%8D%E5%88%B7%E6%96%B0%E9%97%AE%E9%A2%98/">angularjs视图跳转不刷新问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E5%88%9D%E6%8E%A2%E4%B9%8BXSS/">WEB安全初探之XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/maven%E4%B8%8D%E5%90%8C%E7%8E%AF%E5%A2%83%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E6%89%93%E5%8C%85/">maven不同环境资源文件打包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E8%BF%87%E6%BB%A4%E5%80%BC%E4%B8%BAnull%E7%9A%84JSON%E5%AD%97%E6%AE%B5/">spring过滤值为null的JSON字段</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/Syntax%20error-%20%22(%22%20unexpected/">Syntax error- "(" unexpected</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/EL%20access%20a%20map%20value%20by%20Integer%20key/">EL access a map value by Integer key</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/el%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%8F%96%E6%95%B4/">el数值运算取整</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/tomcat%E8%AE%BF%E9%97%AE%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E5%8F%8A%E6%96%87%E4%BB%B6%E5%A4%B9/">tomcat访问系统文件及文件夹</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ssh_exchange_identification-%20Connection%20closed%20by%20remote%20host/">Connection closed by remote host</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/mvc-view-controller%E7%94%A8%E6%B3%95/">mvc-view-controller用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/%E6%B3%A8%E8%A7%A3%E5%88%87%E9%9D%A2%E7%BC%BA%E5%B0%91%E6%B3%A8%E8%A7%A3%E5%8F%82%E6%95%B0/">注解切面缺少注解参数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E5%AE%B9%E5%99%A8%E6%A0%87%E7%AD%BE%E5%89%8D%E7%BC%80/">spring容器标签前缀</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%A4%9A%E4%BB%93%E5%BA%93%E9%85%8D%E7%BD%AE/">git多仓库配置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/High%E4%B8%80%E4%B8%8B/">High一下</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E9%9B%86%E6%88%90%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB/">jacman主题集成百度分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E5%BC%80%E5%90%AFjiathis%E5%88%86%E4%BA%AB/">jacman主题开启jiathis分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/vim%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BAejs%E6%A0%BC%E5%BC%8F%E5%86%85%E5%AE%B9/">vim高亮显示ejs格式内容</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Charles%E4%BD%BF%E7%94%A8%E6%89%8B%E8%AE%B0/">Charles使用手记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E6%96%87%E4%BB%B6%E9%81%8D%E5%8E%86%E9%80%89%E5%8F%96%E8%84%9A%E6%9C%AC/">文件遍历选取脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E4%BA%86%E8%A7%A3IFS/">了解IFS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/">hexo使用进阶</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/shell%E5%85%B3%E8%81%94%E6%95%B0%E7%BB%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">shell关联数组基本用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E5%8D%87%E7%BA%A7mac%20bash%E5%88%B04.3%E7%89%88%E6%9C%AC/">升级mac bash到4.3版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E6%89%93%E9%80%A0%E4%B8%AA%E4%BA%BA%E4%B8%93%E5%B1%9ESublime%20Text%203/">打造个人专属Sublime Text 3</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">Linux命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%BD%AF%E4%BB%B6%E6%9B%B4%E6%96%B0%E4%B8%80/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E8%87%AA%E5%AE%9A%E4%B9%89taglib/">自定义taglib</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2/">hexo搭建github博客</a></li><li class="post-list-item"><a class="post-list-link" href="/article/cache/redis%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%83%A8%E7%BD%B2/">redis单机多实例部署</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">mysql数据库命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">git命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E6%8B%89%E5%8F%96submodule/">git拉取submodule</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8git%E5%9B%9E%E9%80%80%E9%83%A8%E5%88%86%E4%BF%AE%E6%94%B9/">回滚git代码版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E6%8E%A8%E9%80%81%E6%9C%AC%E5%9C%B0git%E4%BB%93%E5%BA%93/">推送本地git仓库</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/velocity%E5%AE%8F%E6%96%87%E4%BB%B6macro.vm%E7%BC%BA%E5%A4%B1/">velocity宏文件macro.vm缺失</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E4%B8%8E%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/">jenkins中文乱码与服务启动</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%BB%BB%E5%8A%A1%E7%AD%89%E5%BE%85%E4%B8%8B%E4%B8%80%E6%AC%A1%E5%8F%AF%E7%94%A8%E6%89%A7%E8%A1%8C/">jenkins任务等待下一次可用执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E6%8F%92%E4%BB%B6buildpipeline%E6%95%B0%E5%80%BC%E8%A7%A3%E6%9E%90%E5%BC%82%E5%B8%B8/">jenkins build-pipeline-plugin 数值解析异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E8%8A%82%E7%82%B9%E9%87%8D%E5%90%AF%E8%84%9A%E6%9C%AC/">jenkins节点重启脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%AE%89%E8%A3%85%E6%9E%81%E7%82%B9%E4%BA%94%E7%AC%94%E7%9A%84%E6%96%B9%E6%B3%95/">Linux安装极点五笔的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Ubuntu%E6%9B%B4%E6%94%B9%E6%88%AA%E5%9B%BE%E9%BB%98%E8%AE%A4%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE/">Ubuntu更改截图默认保存位置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/linux%E5%AE%89%E8%A3%85nginx/">linux安装nginx</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">ubuntu装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E5%80%9F%E5%8A%A9fiddler%E6%8A%93%E5%8C%85/">借助fiddler抓包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%20mvc%20service%E5%AE%9E%E4%BE%8B%E5%8C%96%E4%BA%8C%E6%AC%A1%E9%97%AE%E9%A2%98/">spring mvc service实例化二次问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E6%95%B4%E5%90%88%E5%AE%9E%E8%B7%B5%20-%20velocity/">spring整合实践 - velocity</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E7%89%B9%E6%80%A7%E5%AE%9E%E8%B7%B5%20-%20AOP/">spring特性实践 - AOP</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/%E5%9C%A8%E7%BA%BF%E7%BD%91%E7%AB%99%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">在线网站性能测试工具</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2015-2021 yeshaoting
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+
+    
+        
+            <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+        
+        
+    
+
+    
+        
+            <!--cnzz tongji-->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1257660126'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1257660126%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+<!--cnzz tongji-->
+
+        
+        
+    
+</footer>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74356889-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="yeshaoting" />
+
+
+
+<meta name="description" content="修改软件源为163的源。 一、应用软件1. 安装vim命令：  sudo apt-get install vim  2. chrome直接登录官方网站下载deb包。https:&#x2F;&#x2F;www.google.com&#x2F;intl&#x2F;zh-CN&#x2F;chrome&#x2F;browser&#x2F; 注：由于访问google需要翻墙，可以暂时下载百度网盘里的旧版本。 3. 截图工具shutterubuntu软件中心可下载。 14">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ubuntu装机软件">
+<meta property="og:url" content="http://yeshaoting.cn/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/index.html">
+<meta property="og:site_name" content="芳草地">
+<meta property="og:description" content="修改软件源为163的源。 一、应用软件1. 安装vim命令：  sudo apt-get install vim  2. chrome直接登录官方网站下载deb包。https:&#x2F;&#x2F;www.google.com&#x2F;intl&#x2F;zh-CN&#x2F;chrome&#x2F;browser&#x2F; 注：由于访问google需要翻墙，可以暂时下载百度网盘里的旧版本。 3. 截图工具shutterubuntu软件中心可下载。 14">
+<meta property="og:locale">
+<meta property="og:image" content="http://yeshaoting.cn/asserts/images/logo/ubuntu.png">
+<meta property="article:published_time" content="2015-12-29T05:58:00.000Z">
+<meta property="article:modified_time" content="2021-07-01T04:25:31.000Z">
+<meta property="article:author" content="yeshaoting">
+<meta property="article:tag" content="小记">
+<meta property="article:tag" content="ubuntu">
+<meta property="article:tag" content="装机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yeshaoting.cn/asserts/images/logo/ubuntu.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="芳草地" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>ubuntu装机软件 | 芳草地</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?7b8ea756d29e27c324bd3aba722c4a75";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="4">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>个人签名</li>
+                        
+                        
+                        <li>最近访客</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" rel="noopener" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angularjs/" rel="tag">angularjs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aop/" rel="tag">aop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cache/" rel="tag">cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/charles/" rel="tag">charles</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chrome%E6%8F%92%E4%BB%B6/" rel="tag">chrome插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/el/" rel="tag">el</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/" rel="tag">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innotop/" rel="tag">innotop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/issue/" rel="tag">issue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javadoc/" rel="tag">javadoc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jenkins/" rel="tag">jenkins</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jquery/" rel="tag">jquery</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%B1%BB%E5%BA%93/" rel="tag">js类库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/" rel="tag">mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mvc/" rel="tag">mvc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/placeholder/" rel="tag">placeholder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prism/" rel="tag">prism</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/samba/" rel="tag">samba</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssh/" rel="tag">ssh</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sublime/" rel="tag">sublime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/taglib/" rel="tag">taglib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tomcat/" rel="tag">tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu/" rel="tag">ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/velocity/" rel="tag">velocity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xtrafinder/" rel="tag">xtrafinder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%94%E7%AC%94/" rel="tag">五笔</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E4%BA%AB%E4%BB%A3%E7%A0%81/" rel="tag">分享代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag">命令</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E8%AE%B0/" rel="tag">小记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%8F%E5%88%97%E5%8F%B7/" rel="tag">序列号</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E7%BB%B4%E8%84%91%E5%9B%BE/" rel="tag">思维脑图</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" rel="tag">性能测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag">索引</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA/" rel="tag">装机</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://jarg.iteye.com">爪哇哥的爪哇岛</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com">卢松松博客</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com/daohang">博客大全</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.cnhostus.com">HOSTUS</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.iwwenbo.com/">容休博客</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">只求成为一名靠谱的码农</div>
+                </section>
+                
+
+                
+                <section class="switch-part switch-part5">
+                    <div class="widget visitor" id="js-visitor">
+                       <ul class="ds-recent-visitors" data-num-items="16" data-avatar-size="48"></ul>
+
+                    </div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="个人签名"/>
+</nav>
+      <div class="body-wrap"><article id="post-article/linux/ubuntu装机软件" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/" class="article-date">
+      <time datetime="2015-12-29T05:58:00.000Z" itemprop="datePublished">2015-12-29</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ubuntu装机软件
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E5%B7%A5%E5%85%B7%E8%BD%AF%E4%BB%B6/">工具软件</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ubuntu/" rel="tag">ubuntu</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B0%8F%E8%AE%B0/" rel="tag">小记</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA/" rel="tag">装机</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <img src="/asserts/images/logo/ubuntu.png" class="img-logo img-center" />
+
+
+<p>修改软件源为163的源。</p>
+<h2 id="一、应用软件"><a href="#一、应用软件" class="headerlink" title="一、应用软件"></a>一、应用软件</h2><h3 id="1-安装vim"><a href="#1-安装vim" class="headerlink" title="1. 安装vim"></a>1. 安装vim</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install vim</p>
+</blockquote>
+<h3 id="2-chrome"><a href="#2-chrome" class="headerlink" title="2. chrome"></a>2. chrome</h3><p>直接登录官方网站下载deb包。<br><a target="_blank" rel="noopener" href="https://www.google.com/intl/zh-CN/chrome/browser/">https://www.google.com/intl/zh-CN/chrome/browser/</a></p>
+<p><strong>注</strong>：由于访问google需要翻墙，可以暂时下载百度网盘里的旧版本。</p>
+<h3 id="3-截图工具shutter"><a href="#3-截图工具shutter" class="headerlink" title="3. 截图工具shutter"></a>3. 截图工具shutter</h3><p>ubuntu软件中心可下载。</p>
+<p>14.04的shutter不提供自定义快捷键，可以利用系统自带的键盘快捷键设置来达到目的。</p>
+<p><strong>设置自定义快捷键方法</strong>：设置 -&gt; 键盘 -&gt; 快捷键 -&gt; 自定义快捷键</p>
+<p>命令：</p>
+<blockquote>
+<p>shutter -s</p>
+</blockquote>
+<p><strong>注</strong>：系统自带的截图工具也不错。</p>
+<span id="more"></span>
+
+<h3 id="4-unity-tweak-tool"><a href="#4-unity-tweak-tool" class="headerlink" title="4. unity-tweak-tool"></a>4. unity-tweak-tool</h3><p>unity桌面配置工具, ubuntu软件中心可下载。</p>
+<p>命令：</p>
+<blockquote>
+<p>sudo apt-get install unity-tweak-tool</p>
+</blockquote>
+<h3 id="5-极点五笔输入法"><a href="#5-极点五笔输入法" class="headerlink" title="5. 极点五笔输入法"></a>5. 极点五笔输入法</h3><p>使用系统自带的极点五笔输入法<br>14.04的ibus与系统软件捆绑，ibus坏了，可能导致系统崩溃。慎装，更加不要做任何删除ibus操作。</p>
+<h3 id="6-安装gnome-panel"><a href="#6-安装gnome-panel" class="headerlink" title="6. 安装gnome-panel"></a>6. 安装gnome-panel</h3><p>gnome面板工具，包含 <strong>gnome-desktop-item-edit</strong> 命令，用于创建桌面图标。</p>
+<p>命令：</p>
+<blockquote>
+<p>sudo apt-get install gnome-panel</p>
+</blockquote>
+<p>例如：</p>
+<blockquote>
+<p><code>gnome-desktop-item-edit ~/Desktop/ --create-new</code><br>gnome-desktop-item-edit ~/Desktop/app.desktop</p>
+</blockquote>
+<h3 id="7-百度准入go-bnac"><a href="#7-百度准入go-bnac" class="headerlink" title="7. 百度准入go-bnac"></a>7. 百度准入go-bnac</h3><p>百度网盘里应该有。<br>在百度工作专用，用于linux环境下连接百度准入。</p>
+<h3 id="8-bcompare"><a href="#8-bcompare" class="headerlink" title="8. bcompare"></a>8. bcompare</h3><p>安装包，百度网盘有。<br><strong>注</strong>：依赖ia32-libs</p>
+<h3 id="9-RabbitVCS"><a href="#9-RabbitVCS" class="headerlink" title="9. RabbitVCS"></a>9. RabbitVCS</h3><p>安装步骤：</p>
+<blockquote>
+<p>sudo add-apt-repository ppa:rabbitvcs/ppa<br>sudo apt-get update<br>sudo apt-get install rabbitvcs-core rabbitvcs-cli rabbitvcs-nautilus3 rabbitvcs-gedit</p>
+</blockquote>
+<p><strong>说明</strong>：重启文档管理器，使用rabbitvcs-nautilus3生效。</p>
+<blockquote>
+<p>nautilus -q</p>
+</blockquote>
+<p><strong>注</strong>：不同的系统版本可能需要替换 rabbitvcs-nautilus3 为 rabbitvcs-nautilus 。另外，rabbitvcs-gedit 如无需要的话，可以不安装。</p>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://www.elain.org/?p=742">ubuntu软件—RabbitVCS : TortoiseSVN 的替代者</a></p>
+<h3 id="10-VPN工具"><a href="#10-VPN工具" class="headerlink" title="10. VPN工具"></a>10. VPN工具</h3><p>优先使用cisco Anyconnect VPN Tool。</p>
+<p>如果连接不成功，则可以考虑安装openconnect。<br>安装命令：</p>
+<blockquote>
+<p>sudo apt-get install network-manager-openconnect-gnome</p>
+</blockquote>
+<p>连接VPN命令：</p>
+<blockquote>
+<p>sudo openconnect vpn.sohu-inc.com</p>
+</blockquote>
+<h3 id="11-右键在当前位置打开终端"><a href="#11-右键在当前位置打开终端" class="headerlink" title="11. 右键在当前位置打开终端"></a>11. 右键在当前位置打开终端</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install nautilus-open-terminal</p>
+</blockquote>
+<p><strong>注</strong>：安装完成后，需要重启文件管理器</p>
+<blockquote>
+<p>nautilus -q</p>
+</blockquote>
+<h3 id="12-设置chrome代理"><a href="#12-设置chrome代理" class="headerlink" title="12. 设置chrome代理"></a>12. 设置chrome代理</h3><p><strong>百度工作</strong>：使用chrome插件 <strong>Proxy SwitchySharp</strong> 加载公司代理配置。<br><strong>搜狐工作</strong>：购买红杏网页浏览代理服务，并下载红杏chrome插件使用。</p>
+<h3 id="13-ubuntu打印机"><a href="#13-ubuntu打印机" class="headerlink" title="13. ubuntu打印机"></a>13. ubuntu打印机</h3><p><strong>百度工作</strong>：<br>参考<a target="_blank" rel="noopener" href="http://wiki.babel.baidu.com/twiki/bin/view/Com/Pmo/Iit/Babel/Ubuntu%E5%AE%89%E8%A3%85%E5%85%AC%E5%8F%B8%E6%89%93%E5%8D%B0%E6%9C%BA">http://wiki.babel.baidu.com/twiki/bin/view/Com/Pmo/Iit/Babel/Ubuntu%E5%AE%89%E8%A3%85%E5%85%AC%E5%8F%B8%E6%89%93%E5%8D%B0%E6%9C%BA</a></p>
+<h3 id="14-经典菜单classicmenu-indicator"><a href="#14-经典菜单classicmenu-indicator" class="headerlink" title="14. 经典菜单classicmenu-indicator"></a>14. 经典菜单classicmenu-indicator</h3><p>ubuntu软件中心有下载。</p>
+<p>命令：</p>
+<blockquote>
+<p><code>sudo apt-get install --fix-missing classicmenu-indicator</code></p>
+</blockquote>
+<h3 id="15-rar-zip格式压缩工具"><a href="#15-rar-zip格式压缩工具" class="headerlink" title="15. rar/zip格式压缩工具"></a>15. rar/zip格式压缩工具</h3><p>压缩&amp;解压功能，能与ubuntu自带的归档管理器集成。</p>
+<p>安装命令：</p>
+<blockquote>
+<p>sudo apt-get install rar unrar p7zip-full</p>
+</blockquote>
+<p>卸载命令：</p>
+<blockquote>
+<p>sudo apt-get remove rar unrar p7zip-full</p>
+</blockquote>
+<h3 id="16-chmsee"><a href="#16-chmsee" class="headerlink" title="16. chmsee"></a>16. chmsee</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install chmsee</p>
+</blockquote>
+<p>软件源里可能没有chmsee，网上有已经打包好的deb包。<br><strong>注</strong>：由于ubuntu14.04软件库未提供命令下载，网上有已经打包好的deb包。百度网盘里有下载好的64位chmsee：chmsee_1.3.1.1-1~getdeb2_amd64.deb</p>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://pkgs.org/ubuntu-14.04/getdeb-apps-amd64/chmsee_1.3.1.1-1~getdeb2_amd64.deb.html">chmsee_1.3.1.1-1~getdeb2_amd64.deb</a></p>
+<h3 id="17-virtualbox"><a href="#17-virtualbox" class="headerlink" title="17. virtualbox"></a>17. virtualbox</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install virtualbox-qt</p>
+</blockquote>
+<h3 id="18-LONGENE-QQ2013"><a href="#18-LONGENE-QQ2013" class="headerlink" title="18. LONGENE QQ2013"></a>18. LONGENE QQ2013</h3><p><strong>前提条件</strong>：64位系统需要安装ia32-libs</p>
+<p>安装步骤：</p>
+<blockquote>
+<p>deb <a target="_blank" rel="noopener" href="http://archive.ubuntu.com/ubuntu/">http://archive.ubuntu.com/ubuntu/</a> raring main restricted universe multiverse<br>sudo apt-get update<br>sudo apt-get install ia32-libs<br>sudo dpkg -i WineQQ2013-20131120-Longene.deb</p>
+</blockquote>
+<p><strong>注</strong>：WineQQ2012-20121221-Longene.deb已经不让用，而新版本WineQQ2013SP6-20140102-Longene.deb界面又有问题。可以考虑使用webqq + 虚拟机的方式工作。</p>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://www.longene.org/forum/viewtopic.php?t=4700">wine qq 2013 for linux Ubuntu 64位兼容</a></p>
+<h3 id="19-markdown编辑器haroopad"><a href="#19-markdown编辑器haroopad" class="headerlink" title="19. markdown编辑器haroopad"></a>19. markdown编辑器haroopad</h3><p><strong>下载地址</strong>：<a target="_blank" rel="noopener" href="http://pad.haroopress.com/user.html">http://pad.haroopress.com/user.html</a></p>
+<h3 id="20-wps-office"><a href="#20-wps-office" class="headerlink" title="20. wps-office"></a>20. wps-office</h3><p><strong>下载地址</strong>：<a target="_blank" rel="noopener" href="http://linux.wps.cn/">http://linux.wps.cn/</a></p>
+<p>安装字体管理器命令：</p>
+<blockquote>
+<p>sudo apt-get install font-manager</p>
+</blockquote>
+<p><strong>注</strong>：字体安装有问题，过程可能需要执行exe程序，比较坑，建议不使用需要的字段。(使用过程不会报错)</p>
+<h3 id="21-有道词典"><a href="#21-有道词典" class="headerlink" title="21. 有道词典"></a>21. 有道词典</h3><p><strong>下载地址</strong>：<a target="_blank" rel="noopener" href="http://cidian.youdao.com/index-linux.html">http://cidian.youdao.com/index-linux.html</a></p>
+<p><strong>说明</strong>：<br>使用过程发现会系统出现卡顿的现象。所以，不使用时，最好关闭客户端。<br>英文发音有问题。</p>
+<h3 id="22-flashplayer独立播放器"><a href="#22-flashplayer独立播放器" class="headerlink" title="22. flashplayer独立播放器"></a>22. flashplayer独立播放器</h3><p><strong>下载地址</strong>：<a target="_blank" rel="noopener" href="http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa.i386.tar.gz">http://fpdownload.macromedia.com/pub/flashplayer/updaters/11/flashplayer_11_sa.i386.tar.gz</a></p>
+<h3 id="23-切换默认的shell版本"><a href="#23-切换默认的shell版本" class="headerlink" title="23. 切换默认的shell版本"></a>23. 切换默认的shell版本</h3><blockquote>
+<p>sudo dpkg-reconfigure dash</p>
+</blockquote>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://blog.csdn.net/breeze5428/article/details/27353583">Shell编程笔记——Syntax error: “(“ unexpected</a></p>
+<h3 id="24-百度网盘linux版"><a href="#24-百度网盘linux版" class="headerlink" title="24. 百度网盘linux版"></a>24. 百度网盘linux版</h3><p>Debian及基于Debian的发行版(比如ubuntu, linuxmint)请直接下载 bcloud-x.x.x.deb这个包, 然后双击deb包就能安装了;<br>有些用户并没有安装apt包管理器的GUI界面, 也可以在终端里面安装:</p>
+<blockquote>
+<p>$ sudo dpkg -i bcloud-x.x.x.deb<br>$ sudo apt-get -f install</p>
+</blockquote>
+<p><strong>参考</strong>：<br><a target="_blank" rel="noopener" href="https://github.com/LiuLang/bcloud">https://github.com/LiuLang/bcloud</a><br><a target="_blank" rel="noopener" href="https://github.com/LiuLang/bcloud-packages">https://github.com/LiuLang/bcloud-packages</a></p>
+<h3 id="25-Ubuntu-14-04-64位字体美化-使用文泉驿微黑"><a href="#25-Ubuntu-14-04-64位字体美化-使用文泉驿微黑" class="headerlink" title="25. Ubuntu 14.04 64位字体美化(使用文泉驿微黑)"></a>25. Ubuntu 14.04 64位字体美化(使用文泉驿微黑)</h3><blockquote>
+<p>sudo aptitude install ttf-wqy-microhei</p>
+</blockquote>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://blog.csdn.net/tao_627/article/details/24180781">Ubuntu 14.04 64位字体美化(使用文泉驿微黑)</a></p>
+<h3 id="26-安装gstreamer0-10-ffmpeg"><a href="#26-安装gstreamer0-10-ffmpeg" class="headerlink" title="26. 安装gstreamer0.10-ffmpeg"></a>26. 安装gstreamer0.10-ffmpeg</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:mc3man/trusty-media</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install gstreamer0.10-ffmpeg</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考</strong>：[Ubuntu 14.04如何轻松启用H.264视频支持][11]</p>
+<h3 id="27-安装curl"><a href="#27-安装curl" class="headerlink" title="27. 安装curl"></a>27. 安装curl</h3><blockquote>
+<p>sudo apt-get install curl</p>
+</blockquote>
+<h2 id="二、开发软件"><a href="#二、开发软件" class="headerlink" title="二、开发软件"></a>二、开发软件</h2><h3 id="1-安装git"><a href="#1-安装git" class="headerlink" title="1. 安装git"></a>1. 安装git</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install git</p>
+</blockquote>
+<h3 id="2-securecrt"><a href="#2-securecrt" class="headerlink" title="2. securecrt"></a>2. securecrt</h3><p>securecrt(使用securecrt_linux_crack.pl破解时，需要切换到root用户操作：su root)</p>
+<h3 id="3-subversion"><a href="#3-subversion" class="headerlink" title="3. subversion"></a>3. subversion</h3><p><strong>注</strong>：可能安装rabbitvcs时已经安装</p>
+<p>命令：</p>
+<blockquote>
+<p>sudo apt-get install subversion<br>sudo apt-get install libapache2-svn</p>
+</blockquote>
+<h3 id="4-安装mysql"><a href="#4-安装mysql" class="headerlink" title="4. 安装mysql"></a>4. 安装mysql</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install mysql-server<br>sudo apt-get install mysql-workbench</p>
+</blockquote>
+<h3 id="5-java"><a href="#5-java" class="headerlink" title="5. java"></a>5. java</h3><p>下载jdk bin或者tar.gz包，并安装。</p>
+<p>修改java配置 ~/.profile</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JAVA_HOME=/home/yeshaoting/java/jdk/jdk1.7.0_51</span><br><span class="line">CLASSPATH=$JAVA_HOME/jre/lib</span><br><span class="line">PATH=$PATH:$JAVA_HOME/bin</span><br><span class="line">export JAVA_HOME CLASSPATH PATH</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="6-eclipse／STS"><a href="#6-eclipse／STS" class="headerlink" title="6. eclipse／STS"></a>6. eclipse／STS</h3><p><strong>最新的STS下载地址</strong>：<a target="_blank" rel="noopener" href="http://spring.io/tools/sts/">http://spring.io/tools/sts/</a></p>
+<h3 id="7-maven"><a href="#7-maven" class="headerlink" title="7. maven"></a>7. maven</h3><h2 id="三、系统配置"><a href="#三、系统配置" class="headerlink" title="三、系统配置"></a>三、系统配置</h2><h3 id="1-设置root密码"><a href="#1-设置root密码" class="headerlink" title="1. 设置root密码"></a>1. 设置root密码</h3><p>命令：</p>
+<blockquote>
+<p>sudo passwd root</p>
+</blockquote>
+<h3 id="2-合上笔记本不休眠"><a href="#2-合上笔记本不休眠" class="headerlink" title="2. 合上笔记本不休眠"></a>2. 合上笔记本不休眠</h3><p>编辑/etc/default/acpi-support<br>找到内容：LOCK_SCREEN=true，并修改为：LOCK_SCREEN=false</p>
+<h3 id="3-中文语言支持"><a href="#3-中文语言支持" class="headerlink" title="3. 中文语言支持"></a>3. 中文语言支持</h3><h3 id="4-用户目录英文名"><a href="#4-用户目录英文名" class="headerlink" title="4. 用户目录英文名"></a>4. 用户目录英文名</h3><p>中文ubuntu里用户目录里的路径改成英文</p>
+<p>执行命令：</p>
+<blockquote>
+<p>export LANG=en_US<br>xdg-user-dirs-gtk-update</p>
+</blockquote>
+<p>接下来，会跳出对话框询问：是否将目录转化为英文路径，同意并关闭。<br>在终端中输入命令：export LANG=zh_CN<br>关闭终端，并重起。下次进入系统，系统会提示是否把转化好的目录改回中文。<br>选择不再提示，并取消修改。<br>主目录的中文转英文就完成了~</p>
+<h3 id="5-自动挂载windows分区"><a href="#5-自动挂载windows分区" class="headerlink" title="5. 自动挂载windows分区"></a>5. 自动挂载windows分区</h3><p>查看硬盘的分区情况：<br><code>df -h</code> 或者 <code>sudo fdisk -l</code> 或者使用GParted分区编辑器查看。</p>
+<p>编辑/etc/fstab文件，添加如下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> auto mount C disk</span></span><br><span class="line">/dev/sda1 /home/yeshaoting/windows/C ntfs-3g defaults,locale=zh_CN.UTF-8,umask=022 0 0</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> auto mount D disk</span></span><br><span class="line">/dev/sda5 /home/yeshaoting/windows/D ntfs-3g defaults,locale=zh_CN.UTF-8,umask=0,uid=1000,gid=1000 0 0</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> auto mount E disk</span></span><br><span class="line">/dev/sda6 /home/yeshaoting/windows/E ntfs-3g defaults,locale=zh_CN.UTF-8,umask=0,uid=1000,gid=1000 0 0</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：umask=022表示只读，umask=0表示可读写，uid和gid设置所属权限（可以通过id username命令）。</p>
+<h3 id="6-Eclipse设置-Javadoc背景色"><a href="#6-Eclipse设置-Javadoc背景色" class="headerlink" title="6. Eclipse设置 Javadoc背景色"></a>6. Eclipse设置 Javadoc背景色</h3><p>命令：</p>
+<blockquote>
+<p>cd /usr/share/themes/Ambiance/gtk-2.0<br>sudo gedit gtkrc</p>
+</blockquote>
+<p>最终12.04及14.04修改gtkrc文件内容如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gtk-color-scheme = &quot;base_color:#C7EDCC\nfg_color:#4c4c4c\ntooltip_fg_color:#000000\nselected_bg_color:#f07746\nselected_fg_color:#FFFFFF\ntext_color:#3C3C3C\nbg_color:#f6f4f2\ntooltip_bg_color:#f2edbc\nlink_color:#DD4814&quot;</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://blog.csdn.net/qxb1229/article/details/8265616">Ubuntu 12.04 Eclipse设置 Javadoc背景色</a></p>
+<h3 id="7-thundbird-exchange插件ExQuilla"><a href="#7-thundbird-exchange插件ExQuilla" class="headerlink" title="7. thundbird exchange插件ExQuilla"></a>7. thundbird exchange插件ExQuilla</h3><h2 id="四、软件储备"><a href="#四、软件储备" class="headerlink" title="四、软件储备"></a>四、软件储备</h2><h3 id="1-Ubuntu下的阿里旺旺软件"><a href="#1-Ubuntu下的阿里旺旺软件" class="headerlink" title="1. Ubuntu下的阿里旺旺软件"></a>1. Ubuntu下的阿里旺旺软件</h3><p>阿里旺旺的 Ubuntu 下的版本，下载地址是：<a target="_blank" rel="noopener" href="http://ge.tt/8sPpGIA">http://ge.tt/8sPpGIA</a><br><strong>注</strong>：百度网盘里有。</p>
+<p>如遇无法登陆的情况，解除登陆限制即可。</p>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://wowubuntu.com/aliwangwang.html">http://wowubuntu.com/aliwangwang.html</a></p>
+<h3 id="3-UltraEdit"><a href="#3-UltraEdit" class="headerlink" title="3.UltraEdit"></a>3.UltraEdit</h3><p>下载页面：<a target="_blank" rel="noopener" href="http://www.ultraedit.com/downloads/uex.html">http://www.ultraedit.com/downloads/uex.html</a><br>下载地址：<a target="_blank" rel="noopener" href="http://www.ultraedit.com/files/uex/Ubuntu/">http://www.ultraedit.com/files/uex/Ubuntu/</a><br><strong>注</strong>：百度网盘里有。</p>
+<h4 id="关于破解"><a href="#关于破解" class="headerlink" title="关于破解"></a>关于破解</h4><ol>
+<li>下载破解器：keygen_ue(百度网盘里有)</li>
+<li>删除配置目录：~/.idm/uex/uex.conf</li>
+</ol>
+<p><strong>参考</strong>：<br><a target="_blank" rel="noopener" href="http://mjzhou.com/?p=158">UltraEdit for Linux破解</a><br><a target="_blank" rel="noopener" href="http://blog.itpub.net/12216142/viewspace-708801">UltraEdit for linux 不断试用30天的方法 </a></p>
+<h3 id="4-UltraCompareX"><a href="#4-UltraCompareX" class="headerlink" title="4. UltraCompareX"></a>4. UltraCompareX</h3><p>下载页面：<a target="_blank" rel="noopener" href="http://www.ultraedit.com/downloads/ucx.html">http://www.ultraedit.com/downloads/ucx.html</a><br>下载地址：<a target="_blank" rel="noopener" href="http://www.ultraedit.com/files/ucx/Ubuntu/">http://www.ultraedit.com/files/ucx/Ubuntu/</a></p>
+<p><strong>注</strong>：百度网盘里有。</p>
+<h3 id="5-飞鸽传书GNU-Linux版"><a href="#5-飞鸽传书GNU-Linux版" class="headerlink" title="5. 飞鸽传书GNU/Linux版"></a>5. 飞鸽传书GNU/Linux版</h3><p>命令：</p>
+<blockquote>
+<p>sudo apt-get install iptux</p>
+</blockquote>
+<p>下载地址：<a target="_blank" rel="noopener" href="https://code.google.com/p/iptux/downloads/list">https://code.google.com/p/iptux/downloads/list</a></p>
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://wiki.deepin.org/index.php?title=%E4%BF%A1%E4%BD%BF">信使</a></p>
+<h3 id="6-winusb"><a href="#6-winusb" class="headerlink" title="6. winusb"></a>6. winusb</h3><p>安装命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:colingille/freshlight</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install winusb</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://wiki.deepin.org/index.php?title=WinUSB">WinUSB</a></p>
+<h3 id="7-kwplayer"><a href="#7-kwplayer" class="headerlink" title="7. kwplayer"></a>7. kwplayer</h3><p>需要下载 python3-xlib_xx.deb, python3-keybinder_xx.deb, kwplayer_xx.deb 这 三个软件包. 直接双击就能安装deb包.<br>先安装python3-xlib, 之后是python3-keybinder, 最后是kwplayer.<br>当然, 也可以在终端里安装, 比如:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo dpkg -i kwplayer_xx.deb</span><br><span class="line">sudo apt-get -f install</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考</strong>：<br><a target="_blank" rel="noopener" href="https://github.com/LiuLang/kwplayer">https://github.com/LiuLang/kwplayer</a><br><a target="_blank" rel="noopener" href="https://github.com/LiuLang/kwplayer-packages">https://github.com/LiuLang/kwplayer-packages</a></p>
+<h3 id="8-Folder-Color"><a href="#8-Folder-Color" class="headerlink" title="8. Folder Color"></a>8. Folder Color</h3><p>该软件已经集成到Ubuntu 15.04默认库中。<br>ubuntu14或ubuntu12想要安装此软件的话，需要额外添加软件库。</p>
+<p>安装命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:costales/folder-color</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install folder-color</span><br><span class="line">nautilus -q</span><br></pre></td></tr></table></figure>
+
+<p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://imcn.me/html/y2015/23176.html">Folder Color 已添加到 Ubuntu 15.04 默认库中</a></p>
+<h3 id="ubuntu截图默认保存位置"><a href="#ubuntu截图默认保存位置" class="headerlink" title="ubuntu截图默认保存位置"></a>ubuntu截图默认保存位置</h3><p><strong>参考</strong>：<a target="_blank" rel="noopener" href="http://askubuntu.com/a/134469">Default save directory for gnome-screenshot?</a></p>
+
+      
+    </div>
+
+    
+      
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">ubuntu装机软件</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2015-12-29, 13:58:00</p>
+        <p><span>最后更新:</span>2021-07-01, 12:25:31</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/" title="ubuntu装机软件">http://yeshaoting.cn/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yeshaoting.cn/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    
+
+    
+  </div>
+  
+    
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/article/linux/linux%E5%AE%89%E8%A3%85nginx/">
+                    linux安装nginx
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/article/linux/%E5%80%9F%E5%8A%A9fiddler%E6%8A%93%E5%8C%85/">
+                    借助fiddler抓包
+                </a>
+            </div>
+        
+    </nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6"><span class="toc-text">一、应用软件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85vim"><span class="toc-text">1. 安装vim</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-chrome"><span class="toc-text">2. chrome</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%88%AA%E5%9B%BE%E5%B7%A5%E5%85%B7shutter"><span class="toc-text">3. 截图工具shutter</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-unity-tweak-tool"><span class="toc-text">4. unity-tweak-tool</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%9E%81%E7%82%B9%E4%BA%94%E7%AC%94%E8%BE%93%E5%85%A5%E6%B3%95"><span class="toc-text">5. 极点五笔输入法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E5%AE%89%E8%A3%85gnome-panel"><span class="toc-text">6. 安装gnome-panel</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E7%99%BE%E5%BA%A6%E5%87%86%E5%85%A5go-bnac"><span class="toc-text">7. 百度准入go-bnac</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-bcompare"><span class="toc-text">8. bcompare</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#9-RabbitVCS"><span class="toc-text">9. RabbitVCS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#10-VPN%E5%B7%A5%E5%85%B7"><span class="toc-text">10. VPN工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#11-%E5%8F%B3%E9%94%AE%E5%9C%A8%E5%BD%93%E5%89%8D%E4%BD%8D%E7%BD%AE%E6%89%93%E5%BC%80%E7%BB%88%E7%AB%AF"><span class="toc-text">11. 右键在当前位置打开终端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#12-%E8%AE%BE%E7%BD%AEchrome%E4%BB%A3%E7%90%86"><span class="toc-text">12. 设置chrome代理</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#13-ubuntu%E6%89%93%E5%8D%B0%E6%9C%BA"><span class="toc-text">13. ubuntu打印机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#14-%E7%BB%8F%E5%85%B8%E8%8F%9C%E5%8D%95classicmenu-indicator"><span class="toc-text">14. 经典菜单classicmenu-indicator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#15-rar-zip%E6%A0%BC%E5%BC%8F%E5%8E%8B%E7%BC%A9%E5%B7%A5%E5%85%B7"><span class="toc-text">15. rar&#x2F;zip格式压缩工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#16-chmsee"><span class="toc-text">16. chmsee</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#17-virtualbox"><span class="toc-text">17. virtualbox</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#18-LONGENE-QQ2013"><span class="toc-text">18. LONGENE QQ2013</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#19-markdown%E7%BC%96%E8%BE%91%E5%99%A8haroopad"><span class="toc-text">19. markdown编辑器haroopad</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#20-wps-office"><span class="toc-text">20. wps-office</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#21-%E6%9C%89%E9%81%93%E8%AF%8D%E5%85%B8"><span class="toc-text">21. 有道词典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#22-flashplayer%E7%8B%AC%E7%AB%8B%E6%92%AD%E6%94%BE%E5%99%A8"><span class="toc-text">22. flashplayer独立播放器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#23-%E5%88%87%E6%8D%A2%E9%BB%98%E8%AE%A4%E7%9A%84shell%E7%89%88%E6%9C%AC"><span class="toc-text">23. 切换默认的shell版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#24-%E7%99%BE%E5%BA%A6%E7%BD%91%E7%9B%98linux%E7%89%88"><span class="toc-text">24. 百度网盘linux版</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#25-Ubuntu-14-04-64%E4%BD%8D%E5%AD%97%E4%BD%93%E7%BE%8E%E5%8C%96-%E4%BD%BF%E7%94%A8%E6%96%87%E6%B3%89%E9%A9%BF%E5%BE%AE%E9%BB%91"><span class="toc-text">25. Ubuntu 14.04 64位字体美化(使用文泉驿微黑)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#26-%E5%AE%89%E8%A3%85gstreamer0-10-ffmpeg"><span class="toc-text">26. 安装gstreamer0.10-ffmpeg</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#27-%E5%AE%89%E8%A3%85curl"><span class="toc-text">27. 安装curl</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%BC%80%E5%8F%91%E8%BD%AF%E4%BB%B6"><span class="toc-text">二、开发软件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%AE%89%E8%A3%85git"><span class="toc-text">1. 安装git</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-securecrt"><span class="toc-text">2. securecrt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-subversion"><span class="toc-text">3. subversion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AE%89%E8%A3%85mysql"><span class="toc-text">4. 安装mysql</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-java"><span class="toc-text">5. java</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-eclipse%EF%BC%8FSTS"><span class="toc-text">6. eclipse／STS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-maven"><span class="toc-text">7. maven</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE"><span class="toc-text">三、系统配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E8%AE%BE%E7%BD%AEroot%E5%AF%86%E7%A0%81"><span class="toc-text">1. 设置root密码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%90%88%E4%B8%8A%E7%AC%94%E8%AE%B0%E6%9C%AC%E4%B8%8D%E4%BC%91%E7%9C%A0"><span class="toc-text">2. 合上笔记本不休眠</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%AD%E6%96%87%E8%AF%AD%E8%A8%80%E6%94%AF%E6%8C%81"><span class="toc-text">3. 中文语言支持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E7%94%A8%E6%88%B7%E7%9B%AE%E5%BD%95%E8%8B%B1%E6%96%87%E5%90%8D"><span class="toc-text">4. 用户目录英文名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%87%AA%E5%8A%A8%E6%8C%82%E8%BD%BDwindows%E5%88%86%E5%8C%BA"><span class="toc-text">5. 自动挂载windows分区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-Eclipse%E8%AE%BE%E7%BD%AE-Javadoc%E8%83%8C%E6%99%AF%E8%89%B2"><span class="toc-text">6. Eclipse设置 Javadoc背景色</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-thundbird-exchange%E6%8F%92%E4%BB%B6ExQuilla"><span class="toc-text">7. thundbird exchange插件ExQuilla</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E8%BD%AF%E4%BB%B6%E5%82%A8%E5%A4%87"><span class="toc-text">四、软件储备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Ubuntu%E4%B8%8B%E7%9A%84%E9%98%BF%E9%87%8C%E6%97%BA%E6%97%BA%E8%BD%AF%E4%BB%B6"><span class="toc-text">1. Ubuntu下的阿里旺旺软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-UltraEdit"><span class="toc-text">3.UltraEdit</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E7%A0%B4%E8%A7%A3"><span class="toc-text">关于破解</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-UltraCompareX"><span class="toc-text">4. UltraCompareX</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E9%A3%9E%E9%B8%BD%E4%BC%A0%E4%B9%A6GNU-Linux%E7%89%88"><span class="toc-text">5. 飞鸽传书GNU&#x2F;Linux版</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-winusb"><span class="toc-text">6. winusb</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-kwplayer"><span class="toc-text">7. kwplayer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-Folder-Color"><span class="toc-text">8. Folder Color</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#ubuntu%E6%88%AA%E5%9B%BE%E9%BB%98%E8%AE%A4%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE"><span class="toc-text">ubuntu截图默认保存位置</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <!-- <a href="#" class="fa fa-qzone bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a> -->
+            <!-- <a href="#" class="fa fa-renren bds_renren" data-cmd="renren" title="分享到人人网"></a> -->
+            <!-- <a href="#" class="fa fa-tencent-weibo bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a> -->
+            <!-- <a href="#" class="fa fa-count bds_count" data-cmd="count"></a> -->
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"ubuntu装机软件　| 芳草地　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <div id="comment-box" ></div>
+    <div class="ds-thread" id="ds-thread" data-thread-key="article/linux/ubuntu装机软件/" data-title="ubuntu装机软件" data-url="http://yeshaoting.cn/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/"></div>
+    <script>
+        var duoshuoQuery = {short_name:"yeshaoting"};
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            s.async = true; s.charset = 'UTF-8';
+            (d.head || d.body).appendChild(s);
+        }
+
+        
+    </script>
+    
+    <script> loadComment(); </script>
+
+</div>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/article/linux/linux%E5%AE%89%E8%A3%85nginx/" title="上一篇: linux安装nginx">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/article/linux/%E5%80%9F%E5%8A%A9fiddler%E6%8A%93%E5%8C%85/" title="下一篇: 借助fiddler抓包">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/article/python/Python%E8%8F%9C%E9%B8%9F%E6%95%99%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 循环语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/soft/tools/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8xmind%E9%B1%BC%E9%AA%A8%E5%A4%B4/">如何使用xmind鱼骨头</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E5%9B%BE%E7%89%87%E5%8D%A0%E4%BD%8D%E7%AC%A6placeholder.js/">图片占位符placeholder.js</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/samba%E6%90%AD%E5%BB%BA/">samba搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/chrome%E6%8F%92%E4%BB%B6%EF%BC%9A%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87%E6%AC%A3%E8%B5%8F/">chrome插件：随机图片欣赏</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Innotop/">命令行监控工具Innotop</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9Fhistory/">设置系统history</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE%E7%B1%BB%E5%BA%93prismjs/">代码高亮类库prismjs</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/yelee%E4%B8%BB%E9%A2%98%E6%9C%80%E8%BF%91%E8%AE%BF%E5%AE%A2%E6%8C%82%E4%BB%B6/">yelee主题最近访客挂件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/java%E8%8C%83%E5%9B%B4%E6%98%A0%E5%B0%84/">java范围映射</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E9%80%9A%E8%BF%87InnoDB%E7%9B%91%E6%8E%A7%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90%E9%94%81%E5%8D%A0%E7%94%A8/">通过InnoDB监控状态分析锁占用</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%BC%80%E5%90%AFInnoDB%E7%9B%91%E6%8E%A7/">开启InnoDB监控</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6/">mysql前缀索引大小限制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/">mysql insert锁机制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/request%20entity%20too%20large/">request entity too large</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/XtraFinder%20in%2010.11/">XtraFinder in 10.11</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E4%B8%AD%E6%AD%A2%E9%94%99%E8%AF%AF%E7%9A%84%E5%A4%9A%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C/">中止错误的多行SQL语句执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/xml.etree.ElementTree%E8%A7%A3%E6%9E%90xml/">xml.etree.ElementTree解析xml</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%20520/">python 520</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 条件语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B/">Python菜鸟教程学习笔记 - 数据类型</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Python菜鸟教程学习笔记 - 基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/%E3%80%8A%E8%B7%9F%E8%80%81%E9%BD%90%E5%AD%A6Python%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0/">《跟老齐学Python》学习笔记-数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E6%89%93%E5%8D%B0%E4%B8%AD%E6%96%87%E5%BC%82%E5%B8%B8/">python打印中文异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/Sublime%20Text%203%E5%BA%8F%E5%88%97%E5%8F%B7/">Sublime Text 3序列号</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/jquery%E5%A6%82%E4%BD%95%E4%BC%A0%E8%BE%93json%E6%95%B0%E6%8D%AE/">jquery如何传输json数据</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E5%88%86%E4%BA%AB/">WEB安全渗透分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E5%BE%AA%E7%8E%AF%E6%8C%87%E5%AE%9A%E6%AC%A1%E6%95%B0/">angularjs循环指定次数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E7%94%9F%E6%88%90javadoc%E6%96%87%E6%A1%A3/">生成javadoc文档</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E8%A7%86%E5%9B%BE%E8%B7%B3%E8%BD%AC%E4%B8%8D%E5%88%B7%E6%96%B0%E9%97%AE%E9%A2%98/">angularjs视图跳转不刷新问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E5%88%9D%E6%8E%A2%E4%B9%8BXSS/">WEB安全初探之XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/maven%E4%B8%8D%E5%90%8C%E7%8E%AF%E5%A2%83%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E6%89%93%E5%8C%85/">maven不同环境资源文件打包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E8%BF%87%E6%BB%A4%E5%80%BC%E4%B8%BAnull%E7%9A%84JSON%E5%AD%97%E6%AE%B5/">spring过滤值为null的JSON字段</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/Syntax%20error-%20%22(%22%20unexpected/">Syntax error- "(" unexpected</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/EL%20access%20a%20map%20value%20by%20Integer%20key/">EL access a map value by Integer key</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/el%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%8F%96%E6%95%B4/">el数值运算取整</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/tomcat%E8%AE%BF%E9%97%AE%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E5%8F%8A%E6%96%87%E4%BB%B6%E5%A4%B9/">tomcat访问系统文件及文件夹</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ssh_exchange_identification-%20Connection%20closed%20by%20remote%20host/">Connection closed by remote host</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/mvc-view-controller%E7%94%A8%E6%B3%95/">mvc-view-controller用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/%E6%B3%A8%E8%A7%A3%E5%88%87%E9%9D%A2%E7%BC%BA%E5%B0%91%E6%B3%A8%E8%A7%A3%E5%8F%82%E6%95%B0/">注解切面缺少注解参数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E5%AE%B9%E5%99%A8%E6%A0%87%E7%AD%BE%E5%89%8D%E7%BC%80/">spring容器标签前缀</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%A4%9A%E4%BB%93%E5%BA%93%E9%85%8D%E7%BD%AE/">git多仓库配置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/High%E4%B8%80%E4%B8%8B/">High一下</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E9%9B%86%E6%88%90%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB/">jacman主题集成百度分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E5%BC%80%E5%90%AFjiathis%E5%88%86%E4%BA%AB/">jacman主题开启jiathis分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/vim%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BAejs%E6%A0%BC%E5%BC%8F%E5%86%85%E5%AE%B9/">vim高亮显示ejs格式内容</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Charles%E4%BD%BF%E7%94%A8%E6%89%8B%E8%AE%B0/">Charles使用手记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E6%96%87%E4%BB%B6%E9%81%8D%E5%8E%86%E9%80%89%E5%8F%96%E8%84%9A%E6%9C%AC/">文件遍历选取脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E4%BA%86%E8%A7%A3IFS/">了解IFS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/">hexo使用进阶</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/shell%E5%85%B3%E8%81%94%E6%95%B0%E7%BB%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">shell关联数组基本用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E5%8D%87%E7%BA%A7mac%20bash%E5%88%B04.3%E7%89%88%E6%9C%AC/">升级mac bash到4.3版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E6%89%93%E9%80%A0%E4%B8%AA%E4%BA%BA%E4%B8%93%E5%B1%9ESublime%20Text%203/">打造个人专属Sublime Text 3</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">Linux命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%BD%AF%E4%BB%B6%E6%9B%B4%E6%96%B0%E4%B8%80/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E8%87%AA%E5%AE%9A%E4%B9%89taglib/">自定义taglib</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2/">hexo搭建github博客</a></li><li class="post-list-item"><a class="post-list-link" href="/article/cache/redis%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%83%A8%E7%BD%B2/">redis单机多实例部署</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">mysql数据库命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">git命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E6%8B%89%E5%8F%96submodule/">git拉取submodule</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8git%E5%9B%9E%E9%80%80%E9%83%A8%E5%88%86%E4%BF%AE%E6%94%B9/">回滚git代码版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E6%8E%A8%E9%80%81%E6%9C%AC%E5%9C%B0git%E4%BB%93%E5%BA%93/">推送本地git仓库</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/velocity%E5%AE%8F%E6%96%87%E4%BB%B6macro.vm%E7%BC%BA%E5%A4%B1/">velocity宏文件macro.vm缺失</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E4%B8%8E%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/">jenkins中文乱码与服务启动</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%BB%BB%E5%8A%A1%E7%AD%89%E5%BE%85%E4%B8%8B%E4%B8%80%E6%AC%A1%E5%8F%AF%E7%94%A8%E6%89%A7%E8%A1%8C/">jenkins任务等待下一次可用执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E6%8F%92%E4%BB%B6buildpipeline%E6%95%B0%E5%80%BC%E8%A7%A3%E6%9E%90%E5%BC%82%E5%B8%B8/">jenkins build-pipeline-plugin 数值解析异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E8%8A%82%E7%82%B9%E9%87%8D%E5%90%AF%E8%84%9A%E6%9C%AC/">jenkins节点重启脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%AE%89%E8%A3%85%E6%9E%81%E7%82%B9%E4%BA%94%E7%AC%94%E7%9A%84%E6%96%B9%E6%B3%95/">Linux安装极点五笔的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Ubuntu%E6%9B%B4%E6%94%B9%E6%88%AA%E5%9B%BE%E9%BB%98%E8%AE%A4%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE/">Ubuntu更改截图默认保存位置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/linux%E5%AE%89%E8%A3%85nginx/">linux安装nginx</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">ubuntu装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E5%80%9F%E5%8A%A9fiddler%E6%8A%93%E5%8C%85/">借助fiddler抓包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%20mvc%20service%E5%AE%9E%E4%BE%8B%E5%8C%96%E4%BA%8C%E6%AC%A1%E9%97%AE%E9%A2%98/">spring mvc service实例化二次问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E6%95%B4%E5%90%88%E5%AE%9E%E8%B7%B5%20-%20velocity/">spring整合实践 - velocity</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E7%89%B9%E6%80%A7%E5%AE%9E%E8%B7%B5%20-%20AOP/">spring特性实践 - AOP</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/%E5%9C%A8%E7%BA%BF%E7%BD%91%E7%AB%99%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">在线网站性能测试工具</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2015-2021 yeshaoting
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+
+    
+        
+            <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+        
+        
+    
+
+    
+        
+            <!--cnzz tongji-->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1257660126'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1257660126%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+<!--cnzz tongji-->
+
+        
+        
+    
+</footer>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74356889-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

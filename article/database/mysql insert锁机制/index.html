@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no" />
+<meta name="author" content="yeshaoting" />
+
+
+
+<meta name="description" content="一、前言上周遇到一个因insert而引发的死锁问题，其成因比较令人费解。于是想要了解一下insert加锁机制，但是发现网上介绍的文章比较少且零散，挖掘过程比较忙乱。 本以为只需要系统学习一个较完全的逻辑，但是实际牵扯很多innodb锁相关知识及加锁方式。我好像并没有那么大的能耐，把各种场景的加锁过程一一列举并加之分析；亦没有太多的精力验证网上的言论的准确性。 只好根据现在了解的内容，参考官方">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql insert锁机制">
+<meta property="og:url" content="http://yeshaoting.cn/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/index.html">
+<meta property="og:site_name" content="芳草地">
+<meta property="og:description" content="一、前言上周遇到一个因insert而引发的死锁问题，其成因比较令人费解。于是想要了解一下insert加锁机制，但是发现网上介绍的文章比较少且零散，挖掘过程比较忙乱。 本以为只需要系统学习一个较完全的逻辑，但是实际牵扯很多innodb锁相关知识及加锁方式。我好像并没有那么大的能耐，把各种场景的加锁过程一一列举并加之分析；亦没有太多的精力验证网上的言论的准确性。 只好根据现在了解的内容，参考官方">
+<meta property="og:locale">
+<meta property="og:image" content="http://yeshaoting.cn/asserts/images/logo/mysql.png">
+<meta property="article:published_time" content="2016-07-28T02:05:00.000Z">
+<meta property="article:modified_time" content="2021-07-01T04:25:31.000Z">
+<meta property="article:author" content="yeshaoting">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="innodb">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yeshaoting.cn/asserts/images/logo/mysql.png">
+
+<link rel="apple-touch-icon" href= "/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="芳草地" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.ico">
+
+
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>mysql insert锁机制 | 芳草地</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: false,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script> yiliaConfig.jquery_ui = [false]; </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+    <script>
+        var _hmt = _hmt || [];
+        (function() {
+            var hm = document.createElement("script");
+            hm.src = "//hm.baidu.com/hm.js?7b8ea756d29e27c324bd3aba722c4a75";
+            var s = document.getElementsByTagName("script")[0]; 
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/avatar.png" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/"></a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="4">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>个人签名</li>
+                        
+                        
+                        <li>最近访客</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" rel="noopener" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" rel="noopener" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" rel="noopener" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/XSS/" rel="tag">XSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/angularjs/" rel="tag">angularjs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/aop/" rel="tag">aop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cache/" rel="tag">cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/charles/" rel="tag">charles</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chrome%E6%8F%92%E4%BB%B6/" rel="tag">chrome插件</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/el/" rel="tag">el</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/" rel="tag">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/innotop/" rel="tag">innotop</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/issue/" rel="tag">issue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/java/" rel="tag">java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/javadoc/" rel="tag">javadoc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jenkins/" rel="tag">jenkins</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/jquery/" rel="tag">jquery</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/js%E7%B1%BB%E5%BA%93/" rel="tag">js类库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mac/" rel="tag">mac</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/maven/" rel="tag">maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mvc/" rel="tag">mvc</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/nginx/" rel="tag">nginx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/placeholder/" rel="tag">placeholder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/prism/" rel="tag">prism</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/" rel="tag">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/redis/" rel="tag">redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/samba/" rel="tag">samba</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shell/" rel="tag">shell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spring/" rel="tag">spring</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ssh/" rel="tag">ssh</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/sublime/" rel="tag">sublime</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/taglib/" rel="tag">taglib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tomcat/" rel="tag">tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ubuntu/" rel="tag">ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/velocity/" rel="tag">velocity</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vim/" rel="tag">vim</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/xtrafinder/" rel="tag">xtrafinder</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E4%BA%94%E7%AC%94/" rel="tag">五笔</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%88%86%E4%BA%AB%E4%BB%A3%E7%A0%81/" rel="tag">分享代码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag">命令</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="tag">学习笔记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%9E%E8%B7%B5/" rel="tag">实践</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B0%8F%E8%AE%B0/" rel="tag">小记</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BA%8F%E5%88%97%E5%8F%B7/" rel="tag">序列号</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%9D%E7%BB%B4%E8%84%91%E5%9B%BE/" rel="tag">思维脑图</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/" rel="tag">性能测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B8%97%E9%80%8F/" rel="tag">渗透</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%B4%A2%E5%BC%95/" rel="tag">索引</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%A3%85%E6%9C%BA/" rel="tag">装机</a></li></ul>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://jarg.iteye.com">爪哇哥的爪哇岛</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com">卢松松博客</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://lusongsong.com/daohang">博客大全</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.cnhostus.com">HOSTUS</a>
+                    
+                      <a class="main-nav-link switch-friends-link" target="_blank" rel="noopener" href="http://www.iwwenbo.com/">容休博客</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">只求成为一名靠谱的码农</div>
+                </section>
+                
+
+                
+                <section class="switch-part switch-part5">
+                    <div class="widget visitor" id="js-visitor">
+                       <ul class="ds-recent-visitors" data-num-items="16" data-avatar-size="48"></ul>
+
+                    </div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页"></a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/avatar.png" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页"></a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:yeshaoting@163.com" title="Email"></a>
+                            
+                                <a class="fa 新浪微博" target="_blank" href="http://weibo.com/jarg" title="新浪微博"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="https://github.com/yeshaoting" title="GitHub"></a>
+                            
+                                <a class="fa Google" target="_blank" href="https://plus.google.com/u/0/100825096048752654156" title="Google"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="个人签名"/>
+</nav>
+      <div class="body-wrap"><article id="post-article/database/mysql insert锁机制" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/" class="article-date">
+      <time datetime="2016-07-28T02:05:00.000Z" itemprop="datePublished">2016-07-28</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mysql insert锁机制
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mysql/" rel="tag">mysql</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <img src="/asserts/images/logo/mysql.png" class="img-logo img-center" />
+
+
+<h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>上周遇到一个因insert而引发的死锁问题，其成因比较令人费解。<br>于是想要了解一下insert加锁机制，但是发现网上介绍的文章比较少且零散，挖掘过程比较忙乱。</p>
+<p>本以为只需要系统学习一个较完全的逻辑，但是实际牵扯很多innodb锁相关知识及加锁方式。我好像并没有那么大的能耐，把各种场景的加锁过程一一列举并加之分析；亦没有太多的精力验证网上的言论的准确性。</p>
+<p>只好根据现在了解的内容，参考官方文档，说说自己当前的理解。<br>本文仅供参考，如有误导，概不负责。</p>
+<h2 id="二、现场状态"><a href="#二、现场状态" class="headerlink" title="二、现场状态"></a>二、现场状态</h2><p>不同的mysql版本，不同的参数设置，都可能对加锁过程有影响。<br>分析加锁机制还是应当尽可能多地列举一下关键参数，例如：当前mysql版本、事务隔离级别等。<br>如下，仅仅只列出个别比较重要的参数。</p>
+<h3 id="1-数据库版本"><a href="#1-数据库版本" class="headerlink" title="1.数据库版本"></a>1.数据库版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select version();</span><br><span class="line">+-----------+</span><br><span class="line">| version() |</span><br><span class="line">+-----------+</span><br><span class="line">| 5.6.27    |</span><br><span class="line">+-----------+</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-数据库引擎"><a href="#2-数据库引擎" class="headerlink" title="2. 数据库引擎"></a>2. 数据库引擎</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">&#x27;%engine%&#x27;</span>;</span><br><span class="line">+----------------------------+--------+</span><br><span class="line">| Variable_name              | Value  |</span><br><span class="line">+----------------------------+--------+</span><br><span class="line">| default_storage_engine     | InnoDB |</span><br><span class="line">| default_tmp_storage_engine | InnoDB |</span><br><span class="line">| storage_engine             | InnoDB |</span><br><span class="line">+----------------------------+--------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：InnoDB支持事务，Myisam不支持事务；InnoDB支持行锁和表锁；Myisam不支持行锁。</p>
+<h3 id="3-事务隔离级别"><a href="#3-事务隔离级别" class="headerlink" title="3. 事务隔离级别"></a>3. 事务隔离级别</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select @@global.tx_isolation, @@session.tx_isolation, @@tx_isolation;</span><br><span class="line">+-----------------------+------------------------+-----------------+</span><br><span class="line">| @@global.tx_isolation | @@session.tx_isolation | @@tx_isolation  |</span><br><span class="line">+-----------------------+------------------------+-----------------+</span><br><span class="line">| REPEATABLE-READ       | REPEATABLE-READ        | REPEATABLE-READ |</span><br><span class="line">+-----------------------+------------------------+-----------------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：几种事务隔离级别：READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE</p>
+<h3 id="4-查看gap锁开启状态"><a href="#4-查看gap锁开启状态" class="headerlink" title="4. 查看gap锁开启状态"></a>4. 查看gap锁开启状态</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">&#x27;innodb_locks_unsafe_for_binlog&#x27;</span>;</span><br><span class="line">+--------------------------------+-------+</span><br><span class="line">| Variable_name                  | Value |</span><br><span class="line">+--------------------------------+-------+</span><br><span class="line">| innodb_locks_unsafe_for_binlog | OFF   |</span><br><span class="line">+--------------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>innodb_locks_unsafe_for_binlog：默认值为0，即启用gap lock。<br>最主要的作用就是控制innodb是否对gap加锁。<br>但是，这一设置变更并不影响外键和唯一索引（含主键）对gap进行加锁的需要。<br>开启innodb_locks_unsafe_for_binlog的REPEATABLE-READ事务隔离级别，很大程度上已经蜕变成了READ-COMMITTED。</p>
+<p>参见官方文档[^1]：</p>
+<blockquote>
+<p>By default, the value of innodb_locks_unsafe_for_binlog is 0 (disabled), which means that gap locking is enabled: InnoDB uses next-key locks for searches and index scans. To enable the variable, set it to 1. This causes gap locking to be disabled: InnoDB uses only index-record locks for searches and index scans.</p>
+</blockquote>
+<blockquote>
+<p>Enabling innodb_locks_unsafe_for_binlog does not disable the use of gap locking for foreign-key constraint checking or duplicate-key checking.</p>
+</blockquote>
+<blockquote>
+<p>The effect of enabling innodb_locks_unsafe_for_binlog is similar to but not identical to setting the transaction isolation level to READ COMMITTED.</p>
+</blockquote>
+<h3 id="5-查看自增锁模式"><a href="#5-查看自增锁模式" class="headerlink" title="5. 查看自增锁模式"></a>5. 查看自增锁模式</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like <span class="string">&#x27;innodb_autoinc_lock_mode&#x27;</span>;</span><br><span class="line">+--------------------------+-------+</span><br><span class="line">| Variable_name            | Value |</span><br><span class="line">+--------------------------+-------+</span><br><span class="line">| innodb_autoinc_lock_mode | 1     |</span><br><span class="line">+--------------------------+-------+</span><br></pre></td></tr></table></figure>
+
+<p>innodb_autoinc_lock_mode有3种配置模式：0、1、2，分别对应”传统模式”, “连续模式”, “交错模式”。[^8]<br>传统模式：涉及auto-increment列的插入语句加的表级AUTO-INC锁，只有插入执行结束后才会释放锁。这是一种兼容MySQL 5.1之前版本的策略。<br>连续模式：可以事先确定插入行数的语句(包括单行和多行插入)，分配连续的确定的auto-increment值；对于插入行数不确定的插入语句，仍加表锁。这种模式下，事务回滚，auto-increment值不会回滚，换句话说，自增列内容会不连续。<br>交错模式：同一时刻多条SQL语句产生交错的auto-increment值。</p>
+<p>由于insert语句常常涉及自增列的加锁过程，会涉及到AUTO-INC Locks加锁过程。<br>为了分步了解insert加锁过程，本文暂不讨论任何涉及自增列的加锁逻辑。<br>这一参数设置相关内容可能会出现在我的下一篇文章里。</p>
+<span id="more"></span>
+
+<h3 id="n-etc"><a href="#n-etc" class="headerlink" title="n. etc"></a>n. etc</h3><p>相关的参数配置越详情越好。</p>
+<h2 id="三、InnoDB锁类型-2"><a href="#三、InnoDB锁类型-2" class="headerlink" title="三、InnoDB锁类型[^2]"></a>三、InnoDB锁类型[^2]</h2><h3 id="1-基本锁"><a href="#1-基本锁" class="headerlink" title="1. 基本锁"></a>1. 基本锁</h3><p>基本锁：共享锁(Shared Locks：S锁)与排他锁(Exclusive Locks：X锁)</p>
+<p>mysql允许拿到S锁的事务读一行，允许拿到X锁的事务更新或删除一行。<br>加了S锁的记录，允许其他事务再加S锁，不允许其他事务再加X锁；<br>加了X锁的记录，不允许其他事务再加S锁或者X锁。</p>
+<p>mysql对外提供加这两种锁的语法如下：<br>加S锁：select…lock in share mode<br>加X锁：select…for update</p>
+<h3 id="2-意向锁-Intention-Locks"><a href="#2-意向锁-Intention-Locks" class="headerlink" title="2. 意向锁(Intention Locks)"></a>2. 意向锁(Intention Locks)</h3><p>InnoDB为了支持多粒度(表锁与行锁)的锁并存，引入意向锁。<br>意向锁是表级锁，可分为意向共享锁(IS锁)和意向排他锁(IX锁)。</p>
+<blockquote>
+<p>InnoDB supports multiple granularity locking which permits coexistence of row-level locks and locks on entire tables. To make locking at multiple granularity levels practical, additional types of locks called intention locks are used. Intention locks are table-level locks in InnoDB that indicate which type of lock (shared or exclusive) a transaction will require later for a row in that table. There are two types of intention locks used in InnoDB (assume that transaction T has requested a lock of the indicated type on table t):<br>Intention shared (IS): Transaction T intends to set S locks on individual rows in table t.<br>Intention exclusive (IX): Transaction T intends to set X locks on those rows.</p>
+</blockquote>
+<p>事务在请求S锁和X锁前，需要先获得对应的IS、IX锁。</p>
+<blockquote>
+<p>Before a transaction can acquire an S lock on a row in table t, it must first acquire an IS or stronger lock on t. Before a transaction can acquire an X lock on a row, it must first acquire an IX lock on t.</p>
+</blockquote>
+<p>意向锁产生的主要目的是为了处理行锁和表锁之间的冲突，用于表明“某个事务正在某一行上持有了锁，或者准备去持有锁”。</p>
+<blockquote>
+<p>The main purpose of IX and IS locks is to show that someone is locking a row, or going to lock a row in the table.</p>
+</blockquote>
+<p>共享锁、排他锁与意向锁的兼容矩阵如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center"></th>
+<th align="center">X</th>
+<th align="center">IX</th>
+<th align="center">S</th>
+<th align="center">IS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">X</td>
+<td align="center"><code>冲突</code></td>
+<td align="center"><code>冲突</code></td>
+<td align="center"><code>冲突</code></td>
+<td align="center"><code>冲突</code></td>
+</tr>
+<tr>
+<td align="center">IX</td>
+<td align="center"><code>冲突</code></td>
+<td align="center">兼容</td>
+<td align="center"><code>冲突</code></td>
+<td align="center">兼容</td>
+</tr>
+<tr>
+<td align="center">S</td>
+<td align="center"><code>冲突</code></td>
+<td align="center"><code>冲突</code></td>
+<td align="center">兼容</td>
+<td align="center">兼容</td>
+</tr>
+<tr>
+<td align="center">IS</td>
+<td align="center"><code>冲突</code></td>
+<td align="center">兼容</td>
+<td align="center">兼容</td>
+<td align="center">兼容</td>
+</tr>
+</tbody></table>
+<h4 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h4><p>从官方文档字面意思上看意向锁是表级锁，但是大牛<strong>不认为</strong>“Intention lock 是表级锁”[^5]?<br>另外，由于意向锁主要用于解决行锁与表锁间冲突问题，鉴于平时表级操作特别少，在分析加锁过程是否可以不用过多考虑意向锁的问题?</p>
+<h3 id="3-行锁"><a href="#3-行锁" class="headerlink" title="3. 行锁"></a>3. 行锁</h3><h4 id="记录锁-Record-Locks"><a href="#记录锁-Record-Locks" class="headerlink" title="记录锁(Record Locks)"></a>记录锁(Record Locks)</h4><p>记录锁, 仅仅锁住索引记录的一行。<br>单条索引记录上加锁，record lock锁住的永远是索引，而非记录本身，即使该表上没有任何索引，那么innodb会在后台创建一个隐藏的聚集主键索引，那么锁住的就是这个隐藏的聚集主键索引。所以说当一条sql没有走任何索引时，那么将会在每一条聚集索引后面加X锁，这个类似于表锁，但原理上和表锁应该是完全不同的。</p>
+<p>参见官方文档[^3]：</p>
+<blockquote>
+<p>If the table has no PRIMARY KEY or suitable UNIQUE index, InnoDB internally generates a hidden clustered index on a synthetic column containing row ID values. The rows are ordered by the ID that InnoDB assigns to the rows in such a table. The row ID is a 6-byte field that increases monotonically as new rows are inserted. Thus, the rows ordered by the row ID are physically in insertion order.</p>
+</blockquote>
+<h4 id="间隙锁-Gap-Locks"><a href="#间隙锁-Gap-Locks" class="headerlink" title="间隙锁(Gap Locks)"></a>间隙锁(Gap Locks)</h4><p>区间锁, 仅仅锁住一个索引区间(开区间)。<br>在索引记录之间的间隙中加锁，或者是在某一条索引记录之前或者之后加锁，并不包括该索引记录本身。</p>
+<h4 id="next-key锁-Next-Key-Locks"><a href="#next-key锁-Next-Key-Locks" class="headerlink" title="next-key锁(Next-Key Locks)"></a>next-key锁(Next-Key Locks)</h4><p>record lock + gap lock, 左开右闭区间。</p>
+<blockquote>
+<p>A next-key lock is a combination of a record lock on the index record and a gap lock on the gap before the index record.</p>
+</blockquote>
+<blockquote>
+<p>By default, InnoDB operates in REPEATABLE READ transaction isolation level and with the innodb_locks_unsafe_for_binlog system variable disabled. In this case, InnoDB uses next-key locks for searches and index scans, which prevents phantom rows。</p>
+</blockquote>
+<p>默认情况下，innodb使用next-key locks来锁定记录。<br>但当查询的索引含有唯一属性的时候，Next-Key Lock 会进行优化，将其降级为Record Lock，即仅锁住索引本身，不是范围。</p>
+<h4 id="插入意向锁-Insert-Intention-Locks"><a href="#插入意向锁-Insert-Intention-Locks" class="headerlink" title="插入意向锁(Insert Intention Locks)"></a>插入意向锁(Insert Intention Locks)</h4><p>Gap Lock中存在一种插入意向锁（Insert Intention Lock），在insert操作时产生。在多事务同时写入不同数据至同一索引间隙的时候，并不需要等待其他事务完成，不会发生锁等待。<br>假设有一个记录索引包含键值4和7，不同的事务分别插入5和6，每个事务都会产生一个加在4-7之间的插入意向锁，获取在插入行上的排它锁，但是不会被互相锁住，因为数据行并不冲突。</p>
+<blockquote>
+<p>An insert intention lock is a type of gap lock set by INSERT operations prior to row insertion. This lock signals the intent to insert in such a way that multiple transactions inserting into the same index gap need not wait for each other if they are not inserting at the same position within the gap. Suppose that there are index records with values of 4 and 7. Separate transactions that attempt to insert values of 5 and 6, respectively, each lock the gap between 4 and 7 with insert intention locks prior to obtaining the exclusive lock on the inserted row, but do not block each other because the rows are nonconflicting.</p>
+</blockquote>
+<p><strong>注</strong>：插入意向锁并非意向锁，而是一种特殊的间隙锁。</p>
+<h3 id="4-行锁的兼容矩阵-4"><a href="#4-行锁的兼容矩阵-4" class="headerlink" title="4. 行锁的兼容矩阵[^4]"></a>4. 行锁的兼容矩阵[^4]</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>Gap</th>
+<th>Insert Intention</th>
+<th>Record</th>
+<th>Next-Key</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Gap</strong></td>
+<td>兼容</td>
+<td>兼容</td>
+<td>兼容</td>
+<td>兼容</td>
+</tr>
+<tr>
+<td><strong>Insert Intention</strong></td>
+<td><code>冲突</code></td>
+<td>兼容</td>
+<td>兼容</td>
+<td><code>冲突</code></td>
+</tr>
+<tr>
+<td><strong>Record</strong></td>
+<td>兼容</td>
+<td>兼容</td>
+<td><code>冲突</code></td>
+<td><code>冲突</code></td>
+</tr>
+<tr>
+<td><strong>Next-Key</strong></td>
+<td>兼容</td>
+<td>兼容</td>
+<td><code>冲突</code></td>
+<td><code>冲突</code></td>
+</tr>
+</tbody></table>
+<p><strong>表注</strong>：横向是已经持有的锁，纵向是正在请求的锁。</p>
+<p>由于S锁和S锁是完全兼容的，因此在判别兼容性时只考虑持有的锁与请求的锁是这三种组合情形：X、S和S、X和X、X。<br>另外，需要提醒注意的是进行兼容判断也只是针对于加锁涉及的行有交集的情形。</p>
+<p>分析兼容矩阵可以得出如下几个结论：</p>
+<ul>
+<li>INSERT操作之间不会有冲突。</li>
+<li>GAP,Next-Key会阻止Insert。</li>
+<li>GAP和Record,Next-Key不会冲突</li>
+<li>Record和Record、Next-Key之间相互冲突。</li>
+<li>已有的Insert锁不阻止任何准备加的锁。</li>
+</ul>
+<h3 id="5-自增锁-AUTO-INC-Locks"><a href="#5-自增锁-AUTO-INC-Locks" class="headerlink" title="5. 自增锁(AUTO-INC Locks)"></a>5. 自增锁(AUTO-INC Locks)</h3><p>AUTO-INC锁是一种特殊的表级锁，发生涉及AUTO_INCREMENT列的事务性插入操作时产生。</p>
+<p>官方解释如下[^3]：</p>
+<blockquote>
+<p>An AUTO-INC lock is a special table-level lock taken by transactions inserting into tables with AUTO_INCREMENT columns. In the simplest case, if one transaction is inserting values into the table, any other transactions must wait to do their own inserts into that table, so that rows inserted by the first transaction receive consecutive primary key values.</p>
+</blockquote>
+<h2 id="四、insert加锁过程"><a href="#四、insert加锁过程" class="headerlink" title="四、insert加锁过程"></a>四、insert加锁过程</h2><p>官方文档[^6]对于insert加锁的描述如下：</p>
+<blockquote>
+<p>INSERT sets an exclusive lock on the inserted row. This lock is an index-record lock, not a next-key lock (that is, there is no gap lock) and does not prevent other sessions from inserting into the gap before the inserted row.</p>
+</blockquote>
+<blockquote>
+<p>Prior to inserting the row, a type of gap lock called an insert intention gap lock is set. This lock signals the intent to insert in such a way that multiple transactions inserting into the same index gap need not wait for each other if they are not inserting at the same position within the gap. Suppose that there are index records with values of 4 and 7. Separate transactions that attempt to insert values of 5 and 6 each lock the gap between 4 and 7 with insert intention locks prior to obtaining the exclusive lock on the inserted row, but do not block each other because the rows are nonconflicting.</p>
+</blockquote>
+<blockquote>
+<p>If a duplicate-key error occurs, a shared lock on the duplicate index record is set. This use of a shared lock can result in deadlock should there be multiple sessions trying to insert the same row if another session already has an exclusive lock.</p>
+</blockquote>
+<p>简单的insert会在insert的行对应的索引记录上加一个排它锁，这是一个record lock，并没有gap，所以并不会阻塞其他session在gap间隙里插入记录。</p>
+<p>不过在insert操作之前，还会加一种锁，官方文档称它为insertion intention gap lock，也就是意向的gap锁。这个意向gap锁的作用就是预示着当多事务并发插入相同的gap空隙时，只要插入的记录不是gap间隙中的相同位置，则无需等待其他session就可完成，这样就使得insert操作无须加真正的gap lock。<br>假设有一个记录索引包含键值4和7，不同的事务分别插入5和6，每个事务都会产生一个加在4-7之间的插入意向锁，获取在插入行上的排它锁，但是不会被互相锁住，因为数据行并不冲突。</p>
+<p>假设发生了一个唯一键冲突错误，那么将会在重复的索引记录上加读锁。当有多个session同时插入相同的行记录时，如果另外一个session已经获得该行的排它锁，那么将会导致死锁。</p>
+<h3 id="思考：Insert-Intention-Locks作用"><a href="#思考：Insert-Intention-Locks作用" class="headerlink" title="思考：Insert Intention Locks作用"></a>思考：Insert Intention Locks作用</h3><p>Insert Intention Locks的引入，我理解是为了提高数据插入的并发能力。<br>如果没有Insert Intention Locks的话，可能就需要使用Gap Locks来代替。</p>
+<h2 id="五、insert死锁场景分析"><a href="#五、insert死锁场景分析" class="headerlink" title="五、insert死锁场景分析"></a>五、insert死锁场景分析</h2><p>接下来，带大家看几个与insert相关的死锁场景。</p>
+<h3 id="1-duplicate-key-error引发的死锁"><a href="#1-duplicate-key-error引发的死锁" class="headerlink" title="1. duplicate key error引发的死锁"></a>1. duplicate key error引发的死锁</h3><p>这个场景主要发生在两个以上的事务同时进行唯一键值相同的记录插入操作。</p>
+<h4 id="表结构"><a href="#表结构" class="headerlink" title="表结构"></a>表结构</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `aa` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">10</span>) unsigned <span class="keyword">NOT</span> <span class="keyword">NULL</span> COMMENT <span class="string">&#x27;主键&#x27;</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">20</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;&#x27;</span> COMMENT <span class="string">&#x27;姓名&#x27;</span>,</span><br><span class="line">  `age` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;年龄&#x27;</span>,</span><br><span class="line">  `stage` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">&#x27;0&#x27;</span> COMMENT <span class="string">&#x27;关卡数&#x27;</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`),</span><br><span class="line">  <span class="keyword">UNIQUE</span> KEY `udx_name` (`name`),</span><br><span class="line">  KEY `idx_stage` (`stage`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="表数据"><a href="#表数据" class="headerlink" title="表数据"></a>表数据</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from aa;</span><br><span class="line">+----+------+-----+-------+</span><br><span class="line">| id | name | age | stage |</span><br><span class="line">+----+------+-----+-------+</span><br><span class="line">|  1 | yst  |  11 |     8 |</span><br><span class="line">|  2 | dxj  |   7 |     4 |</span><br><span class="line">|  3 | lb   |  13 |     7 |</span><br><span class="line">|  4 | zsq  |   5 |     7 |</span><br><span class="line">|  5 | lxr  |  13 |     4 |</span><br><span class="line">+----+------+-----+-------+</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="事务执行时序表"><a href="#事务执行时序表" class="headerlink" title="事务执行时序表"></a>事务执行时序表</h4><table>
+<thead>
+<tr>
+<th>T1(36727)</th>
+<th>T2(36728)</th>
+<th>T3(36729)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>begin;</td>
+<td>begin;</td>
+<td>begin;</td>
+</tr>
+<tr>
+<td>insert into aa values(6, ‘test’, 12, 3);</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>insert into aa values(6, ‘test’, 12, 3);</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>insert into aa values(6, ‘test’, 12, 3);</td>
+</tr>
+<tr>
+<td>rollback;</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction</td>
+</tr>
+<tr>
+<td></td>
+<td>Query OK, 1 row affected (13.10 sec)</td>
+<td>&nbsp;</td>
+</tr>
+</tbody></table>
+<p>如果T1未rollback，而是commit的话，T2和T3会报唯一键冲突：ERROR 1062 (23000): Duplicate entry ‘6’ for key ‘PRIMARY’</p>
+<h4 id="事务锁占用情况"><a href="#事务锁占用情况" class="headerlink" title="事务锁占用情况"></a>事务锁占用情况</h4><p>T1 rollback前，各事务锁占用情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from information_schema.innodb_locks;</span><br><span class="line">+--------------+-------------+-----------+-----------+-------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| lock_id      | lock_trx_id | lock_mode | lock_type | lock_table  | lock_index | lock_space | lock_page | lock_rec | lock_data |</span><br><span class="line">+--------------+-------------+-----------+-----------+-------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| 36729:24:3:7 | 36729       | S         | RECORD    | `<span class="built_in">test</span>`.`aa` | PRIMARY    |         24 |         3 |        7 | 6         |</span><br><span class="line">| 36727:24:3:7 | 36727       | X         | RECORD    | `<span class="built_in">test</span>`.`aa` | PRIMARY    |         24 |         3 |        7 | 6         |</span><br><span class="line">| 36728:24:3:7 | 36728       | S         | RECORD    | `<span class="built_in">test</span>`.`aa` | PRIMARY    |         24 |         3 |        7 | 6         |</span><br><span class="line">+--------------+-------------+-----------+-----------+-------------+------------+------------+-----------+----------+-----------+</span><br></pre></td></tr></table></figure>
+
+<p><strong>注</strong>：mysql有自己的一套规则来决定T2与T3哪个进行回滚，本文不做讨论。</p>
+<h4 id="死锁日志"><a href="#死锁日志" class="headerlink" title="死锁日志"></a>死锁日志</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">LATEST DETECTED DEADLOCK</span><br><span class="line">------------------------</span><br><span class="line">2016-07-21 19:34:23 700000a3f000</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line">TRANSACTION 36728, ACTIVE 199 sec inserting</span><br><span class="line">mysql tables <span class="keyword">in</span> use 1, locked 1</span><br><span class="line">LOCK WAIT 4 lock struct(s), heap size 1184, 2 row lock(s)</span><br><span class="line">MySQL thread id 13, OS thread handle 0x700000b0b000, query id 590 localhost root update</span><br><span class="line">insert into aa values(6, <span class="string">&#x27;test&#x27;</span>, 12, 3)</span><br><span class="line">*** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 24 page no 3 n bits 80 index `PRIMARY` of table `<span class="built_in">test</span>`.`aa` trx id 36728 lock_mode X insert intention waiting</span><br><span class="line">Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0</span><br><span class="line"> 0: len 8; hex 73757072656d756d; asc supremum;;</span><br><span class="line"></span><br><span class="line">*** (2) TRANSACTION:</span><br><span class="line">TRANSACTION 36729, ACTIVE 196 sec inserting</span><br><span class="line">mysql tables <span class="keyword">in</span> use 1, locked 1</span><br><span class="line">4 lock struct(s), heap size 1184, 2 row lock(s)</span><br><span class="line">MySQL thread id 14, OS thread handle 0x700000a3f000, query id 591 localhost root update</span><br><span class="line">insert into aa values(6, <span class="string">&#x27;test&#x27;</span>, 12, 3)</span><br><span class="line">*** (2) HOLDS THE LOCK(S):</span><br><span class="line">RECORD LOCKS space id 24 page no 3 n bits 80 index `PRIMARY` of table `<span class="built_in">test</span>`.`aa` trx id 36729 lock mode S</span><br><span class="line">Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0</span><br><span class="line"> 0: len 8; hex 73757072656d756d; asc supremum;;</span><br><span class="line"></span><br><span class="line">*** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 24 page no 3 n bits 80 index `PRIMARY` of table `<span class="built_in">test</span>`.`aa` trx id 36729 lock_mode X insert intention waiting</span><br><span class="line">Record lock, heap no 1 PHYSICAL RECORD: n_fields 1; compact format; info bits 0</span><br><span class="line"> 0: len 8; hex 73757072656d756d; asc supremum;;</span><br><span class="line"></span><br><span class="line">*** WE ROLL BACK TRANSACTION (2)</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="死锁成因"><a href="#死锁成因" class="headerlink" title="死锁成因"></a>死锁成因</h4><p>事务T1成功插入记录，并获得索引id=6上的排他记录锁(LOCK_X | LOCK_REC_NOT_GAP)。<br>紧接着事务T2、T3也开始插入记录，请求排他插入意向锁(LOCK_X | LOCK_GAP | LOCK_INSERT_INTENTION)；但由于发生重复唯一键冲突，各自请求的排他记录锁(LOCK_X | LOCK_REC_NOT_GAP)转成共享记录锁(LOCK_S | LOCK_REC_NOT_GAP)。</p>
+<p>T1回滚释放索引id=6上的排他记录锁(LOCK_X | LOCK_REC_NOT_GAP)，T2和T3都要请求索引id=6上的排他记录锁(LOCK_X | LOCK_REC_NOT_GAP)。<br>由于X锁与S锁互斥，T2和T3都等待对方释放S锁。<br>于是，死锁便产生了。</p>
+<p>如果此场景下，只有两个事务T1与T2或者T1与T3，则不会引发如上死锁情况产生。</p>
+<h4 id="思考-1"><a href="#思考-1" class="headerlink" title="思考"></a>思考</h4><ul>
+<li><p>为什么发现重复主键冲突的时候，要将事务请求的X锁转成S锁？<br>(比较牵强的)个人理解，跟插入意向锁类型，也是为了提高插入的并发效率。</p>
+</li>
+<li><p>插入前请求插入意向锁的作用？<br>个人认为，通过兼容矩阵来分析，Insert Intention Locks是为了减少插入时的锁冲突。</p>
+</li>
+</ul>
+<h3 id="2-GAP与Insert-Intention冲突引发的死锁"><a href="#2-GAP与Insert-Intention冲突引发的死锁" class="headerlink" title="2. GAP与Insert Intention冲突引发的死锁"></a>2. GAP与Insert Intention冲突引发的死锁</h3><h4 id="表结构-1"><a href="#表结构-1" class="headerlink" title="表结构"></a>表结构</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `t` (</span><br><span class="line">  `a` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `b` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`a`),</span><br><span class="line">  KEY `idx_b` (`b`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="表数据-1"><a href="#表数据-1" class="headerlink" title="表数据"></a>表数据</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from t;</span><br><span class="line">+----+------+</span><br><span class="line">| a  | b    |</span><br><span class="line">+----+------+</span><br><span class="line">|  1 |    2 |</span><br><span class="line">|  2 |    3 |</span><br><span class="line">|  3 |    4 |</span><br><span class="line">| 11 |   22 |</span><br><span class="line">+----+------+</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="事务执行时序表-1"><a href="#事务执行时序表-1" class="headerlink" title="事务执行时序表"></a>事务执行时序表</h4><p>| T1(36831) | T2(36832) |<br>|—|—|—|<br>| begin; | begin; |<br>| select * from t where b = 6 for update; | |<br>| | select * from t where b = 8 for update; |<br>| insert into t values (4,5); | |<br>| | insert into t values (4,5); |<br>| | ERROR 1213 (40001): Deadlock found when trying to get lock; try restarting transaction |<br>| Query OK, 1 row affected (5.45 sec) | &nbsp; |</p>
+<h4 id="事务锁占用情况-1"><a href="#事务锁占用情况-1" class="headerlink" title="事务锁占用情况"></a>事务锁占用情况</h4><p>T2 insert前，各事务锁占用情况：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select * from information_schema.innodb_locks;</span><br><span class="line">+--------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| lock_id      | lock_trx_id | lock_mode | lock_type | lock_table | lock_index | lock_space | lock_page | lock_rec | lock_data |</span><br><span class="line">+--------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br><span class="line">| 36831:25:4:5 | 36831       | X,GAP     | RECORD    | `<span class="built_in">test</span>`.`t` | idx_b      |         25 |         4 |        5 | 22, 11    |</span><br><span class="line">| 36832:25:4:5 | 36832       | X,GAP     | RECORD    | `<span class="built_in">test</span>`.`t` | idx_b      |         25 |         4 |        5 | 22, 11    |</span><br><span class="line">+--------------+-------------+-----------+-----------+------------+------------+------------+-----------+----------+-----------+</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="死锁日志-1"><a href="#死锁日志-1" class="headerlink" title="死锁日志"></a>死锁日志</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">------------------------</span><br><span class="line">LATEST DETECTED DEADLOCK</span><br><span class="line">------------------------</span><br><span class="line">2016-07-28 12:28:34 700000a3f000</span><br><span class="line">*** (1) TRANSACTION:</span><br><span class="line">TRANSACTION 36831, ACTIVE 17 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">LOCK WAIT 4 lock struct(s), heap size 1184, 3 row lock(s), undo log entries 1</span><br><span class="line">MySQL thread id 38, OS thread handle 0x700000b0b000, query id 953 localhost root update</span><br><span class="line">insert into t values (4,5)</span><br><span class="line">*** (1) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 25 page no 4 n bits 72 index `idx_b` of table `test`.`t` trx id 36831 lock_mode X locks gap before rec insert intention waiting</span><br><span class="line">Record lock, heap no 5 PHYSICAL RECORD: n_fields 2; compact format; info bits 0</span><br><span class="line"> 0: len 4; hex 80000016; asc     ;;</span><br><span class="line"> 1: len 4; hex 8000000b; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) TRANSACTION:</span><br><span class="line">TRANSACTION 36832, ACTIVE 13 sec inserting</span><br><span class="line">mysql tables in use 1, locked 1</span><br><span class="line">3 lock struct(s), heap size 360, 2 row lock(s)</span><br><span class="line">MySQL thread id 39, OS thread handle 0x700000a3f000, query id 954 localhost root update</span><br><span class="line">insert into t values (4,5)</span><br><span class="line">*** (2) HOLDS THE LOCK(S):</span><br><span class="line">RECORD LOCKS space id 25 page no 4 n bits 72 index `idx_b` of table `test`.`t` trx id 36832 lock_mode X locks gap before rec</span><br><span class="line">Record lock, heap no 5 PHYSICAL RECORD: n_fields 2; compact format; info bits 0</span><br><span class="line"> 0: len 4; hex 80000016; asc     ;;</span><br><span class="line"> 1: len 4; hex 8000000b; asc     ;;</span><br><span class="line"></span><br><span class="line">*** (2) WAITING FOR THIS LOCK TO BE GRANTED:</span><br><span class="line">RECORD LOCKS space id 25 page no 3 n bits 72 index `PRIMARY` of table `test`.`t` trx id 36832 lock mode S locks rec but not gap waiting</span><br><span class="line">Record lock, heap no 5 PHYSICAL RECORD: n_fields 4; compact format; info bits 0</span><br><span class="line"> 0: len 4; hex 80000004; asc     ;;</span><br><span class="line"> 1: len 6; hex 000000008fdf; asc       ;;</span><br><span class="line"> 2: len 7; hex 8d000001d00110; asc        ;;</span><br><span class="line"> 3: len 4; hex 80000005; asc     ;;</span><br><span class="line"></span><br><span class="line">*** WE ROLL BACK TRANSACTION (2)</span><br></pre></td></tr></table></figure>
+
+
+<h4 id="死锁成因-1"><a href="#死锁成因-1" class="headerlink" title="死锁成因"></a>死锁成因</h4><p>事务T1执行查询语句，在索引b=6上加排他Next-key锁(LOCK_X | LOCK_ORDINARY)，会锁住idx_b索引范围(4, 22)。<br>事务T2执行查询语句，在索引b=8上加排他Next-key锁(LOCK_X | LOCK_ORDINARY)，会锁住idx_b索引范围(4, 22)。由于请求的GAP与已持有的GAP是兼容的，因此，事务T2在idx_b索引范围(4, 22)也能加锁成功。</p>
+<p>事务T1执行插入语句，会先加排他Insert Intention锁。由于请求的Insert Intention锁与已有的GAP锁不兼容，则事务T1等待T2释放GAP锁。<br>事务T2执行插入语句，也会等待T1释放GAP锁。<br>于是，死锁便产生了。</p>
+<p><strong>注</strong>：LOCK_ORDINARY拥有LOCK_GAP一部分特性。</p>
+<h4 id="思考：Insert-Intention锁在加哪级索引上？"><a href="#思考：Insert-Intention锁在加哪级索引上？" class="headerlink" title="思考：Insert Intention锁在加哪级索引上？"></a>思考：Insert Intention锁在加哪级索引上？</h4><p>这个排他锁加在PK上，还是二级索引上？</p>
+<h2 id="六、课后思考"><a href="#六、课后思考" class="headerlink" title="六、课后思考"></a>六、课后思考</h2><ol>
+<li><p>无主键的加锁过程<br>无PK时，会创建一个隐式聚簇索引。加锁在这个隐式聚簇索引会有什么不同？</p>
+</li>
+<li><p>复合索引加锁过程</p>
+</li>
+<li><p>多条件(where condition)加锁过程</p>
+</li>
+<li><p>隐式锁与显式锁，隐式锁什么情况下会转换成显式锁</p>
+</li>
+<li><p>如果插入意向锁不阻止任何锁，这个锁还有必要存在吗？<br>目前看到的作用是，通过加锁的方式来唤醒等待线程。<br>但这并不意味着，被唤醒后可以直接做插入操作了。需要再次判断是否有锁冲突。</p>
+</li>
+</ol>
+<h2 id="七、补充知识"><a href="#七、补充知识" class="headerlink" title="七、补充知识"></a>七、补充知识</h2><h3 id="1-查看事务隔离级别"><a href="#1-查看事务隔离级别" class="headerlink" title="1. 查看事务隔离级别"></a>1. 查看事务隔离级别</h3><p>SELECT @@global.tx_isolation;<br>SELECT @@session.tx_isolation;<br>SELECT @@tx_isolation;</p>
+<h3 id="2-设置隔离级别"><a href="#2-设置隔离级别" class="headerlink" title="2. 设置隔离级别"></a>2. 设置隔离级别</h3><p>SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL {READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE}<br>例如：set session transaction isolation level read uncommitted;</p>
+<h3 id="3-查看auto-increment机制模式"><a href="#3-查看auto-increment机制模式" class="headerlink" title="3. 查看auto_increment机制模式"></a>3. 查看auto_increment机制模式</h3><p>show variables like ‘innodb_autoinc_lock_mode’;</p>
+<h3 id="4-查看表状态"><a href="#4-查看表状态" class="headerlink" title="4. 查看表状态"></a>4. 查看表状态</h3><p>show table status like ‘plan_branch’\G;<br>show table status from test like ‘plan_branch’\G;</p>
+<h3 id="5-查看SQL性能"><a href="#5-查看SQL性能" class="headerlink" title="5. 查看SQL性能"></a>5. 查看SQL性能</h3><p>show profiles<br>show profile for query 1;</p>
+<h3 id="6-查看当前最新事务ID"><a href="#6-查看当前最新事务ID" class="headerlink" title="6. 查看当前最新事务ID"></a>6. 查看当前最新事务ID</h3><p>每开启一个新事务，记录当前最新事务的id，可用于后续死锁分析。<br>show engine innodb status\G;</p>
+<h3 id="7-查看事务锁等待状态情况"><a href="#7-查看事务锁等待状态情况" class="headerlink" title="7. 查看事务锁等待状态情况"></a>7. 查看事务锁等待状态情况</h3><p>select * from information_schema.innodb_locks;<br>select * from information_schema.innodb_lock_waits;<br>select * from information_schema.innodb_trx;</p>
+<h3 id="8-查看innodb状态-包含最近的死锁日志"><a href="#8-查看innodb状态-包含最近的死锁日志" class="headerlink" title="8. 查看innodb状态(包含最近的死锁日志)"></a>8. 查看innodb状态(包含最近的死锁日志)</h3><p>show engine innodb status;</p>
+<h2 id="八、参考文档"><a href="#八、参考文档" class="headerlink" title="八、参考文档"></a>八、参考文档</h2><p>[^1]: <a target="_blank" rel="noopener" href="https://dev.mysql.com/doc/refman/5.6/en/innodb-parameters.html">InnoDB Startup Options and System Variables</a><br>[^2]: <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.6/en/innodb-locking.html">InnoDB Locking</a><br>[^3]: <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.6/en/innodb-index-types.html">Clustered and Secondary Indexes</a><br>[^4]: <a target="_blank" rel="noopener" href="http://www.cnblogs.com/renolei/p/4673842.html">[MySQL] gap lock/next-key lock浅析</a><br>[^5]: <a target="_blank" rel="noopener" href="http://hedengcheng.com/?p=771#comment-5543">Intention Lock是否表级锁</a><br>[^6]: <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.6/en/innodb-locks-set.html">Locks Set by Different SQL Statements in InnoDB</a><br>[^7]: <a target="_blank" rel="noopener" href="http://feiyang21687.github.io/Mysql-Transaction/">一个Mysql的死锁现象，及复现过程</a><br>[^8]: <a target="_blank" rel="noopener" href="http://www.cnblogs.com/renolei/p/5559135.html">AUTO_INCREMENT lock Handing in InnoDB</a><br>[^9]: <a target="_blank" rel="noopener" href="http://blog.csdn.net/cug_jiang126com/article/details/50596729">深入理解innodb的锁(record,gap,Next-Key lock)</a><br>[^10]: <a target="_blank" rel="noopener" href="http://blog.csdn.net/and1kaney/article/details/51213979">information_schema中Innodb相关表用于分析sql查询锁的使用情况介绍</a><br>[^11]: <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.5/en/innodb-locks-table.html">The INFORMATION_SCHEMA INNODB_LOCKS Table</a><br>[^12]: <a target="_blank" rel="noopener" href="http://dev.mysql.com/doc/refman/5.5/en/innodb-trx-table.html">The INFORMATION_SCHEMA INNODB_TRX Table</a><br>[^13]: <a target="_blank" rel="noopener" href="http://blog.csdn.net/yanzongshuai/article/details/46398609">mysql innodb插入意向锁</a></p>
+
+      
+    </div>
+
+    
+      
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/">mysql insert锁机制</a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页"></a></p>
+        <p><span>发布时间:</span>2016-07-28, 10:05:00</p>
+        <p><span>最后更新:</span>2021-07-01, 12:25:31</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/" title="mysql insert锁机制">http://yeshaoting.cn/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yeshaoting.cn/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/　　作者: " title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target = "_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    
+
+    
+  </div>
+  
+    
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/article/database/mysql%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6/">
+                    mysql前缀索引大小限制
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/article/java/request%20entity%20too%20large/">
+                    request entity too large
+                </a>
+            </div>
+        
+    </nav>
+
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E5%89%8D%E8%A8%80"><span class="toc-text">一、前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%8E%B0%E5%9C%BA%E7%8A%B6%E6%80%81"><span class="toc-text">二、现场状态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%89%88%E6%9C%AC"><span class="toc-text">1.数据库版本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%95%B0%E6%8D%AE%E5%BA%93%E5%BC%95%E6%93%8E"><span class="toc-text">2. 数据库引擎</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-text">3. 事务隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8Bgap%E9%94%81%E5%BC%80%E5%90%AF%E7%8A%B6%E6%80%81"><span class="toc-text">4. 查看gap锁开启状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%9F%A5%E7%9C%8B%E8%87%AA%E5%A2%9E%E9%94%81%E6%A8%A1%E5%BC%8F"><span class="toc-text">5. 查看自增锁模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#n-etc"><span class="toc-text">n. etc</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81InnoDB%E9%94%81%E7%B1%BB%E5%9E%8B-2"><span class="toc-text">三、InnoDB锁类型[^2]</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%9F%BA%E6%9C%AC%E9%94%81"><span class="toc-text">1. 基本锁</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%84%8F%E5%90%91%E9%94%81-Intention-Locks"><span class="toc-text">2. 意向锁(Intention Locks)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83"><span class="toc-text">思考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E8%A1%8C%E9%94%81"><span class="toc-text">3. 行锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%B0%E5%BD%95%E9%94%81-Record-Locks"><span class="toc-text">记录锁(Record Locks)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%97%B4%E9%9A%99%E9%94%81-Gap-Locks"><span class="toc-text">间隙锁(Gap Locks)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#next-key%E9%94%81-Next-Key-Locks"><span class="toc-text">next-key锁(Next-Key Locks)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8F%92%E5%85%A5%E6%84%8F%E5%90%91%E9%94%81-Insert-Intention-Locks"><span class="toc-text">插入意向锁(Insert Intention Locks)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E8%A1%8C%E9%94%81%E7%9A%84%E5%85%BC%E5%AE%B9%E7%9F%A9%E9%98%B5-4"><span class="toc-text">4. 行锁的兼容矩阵[^4]</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%87%AA%E5%A2%9E%E9%94%81-AUTO-INC-Locks"><span class="toc-text">5. 自增锁(AUTO-INC Locks)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81insert%E5%8A%A0%E9%94%81%E8%BF%87%E7%A8%8B"><span class="toc-text">四、insert加锁过程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%9D%E8%80%83%EF%BC%9AInsert-Intention-Locks%E4%BD%9C%E7%94%A8"><span class="toc-text">思考：Insert Intention Locks作用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81insert%E6%AD%BB%E9%94%81%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90"><span class="toc-text">五、insert死锁场景分析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-duplicate-key-error%E5%BC%95%E5%8F%91%E7%9A%84%E6%AD%BB%E9%94%81"><span class="toc-text">1. duplicate key error引发的死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84"><span class="toc-text">表结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E6%95%B0%E6%8D%AE"><span class="toc-text">表数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E8%A1%A8"><span class="toc-text">事务执行时序表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%94%81%E5%8D%A0%E7%94%A8%E6%83%85%E5%86%B5"><span class="toc-text">事务锁占用情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E9%94%81%E6%97%A5%E5%BF%97"><span class="toc-text">死锁日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E9%94%81%E6%88%90%E5%9B%A0"><span class="toc-text">死锁成因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83-1"><span class="toc-text">思考</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-GAP%E4%B8%8EInsert-Intention%E5%86%B2%E7%AA%81%E5%BC%95%E5%8F%91%E7%9A%84%E6%AD%BB%E9%94%81"><span class="toc-text">2. GAP与Insert Intention冲突引发的死锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84-1"><span class="toc-text">表结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A1%A8%E6%95%B0%E6%8D%AE-1"><span class="toc-text">表数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E8%A1%A8-1"><span class="toc-text">事务执行时序表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E9%94%81%E5%8D%A0%E7%94%A8%E6%83%85%E5%86%B5-1"><span class="toc-text">事务锁占用情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E9%94%81%E6%97%A5%E5%BF%97-1"><span class="toc-text">死锁日志</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%BB%E9%94%81%E6%88%90%E5%9B%A0-1"><span class="toc-text">死锁成因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%9D%E8%80%83%EF%BC%9AInsert-Intention%E9%94%81%E5%9C%A8%E5%8A%A0%E5%93%AA%E7%BA%A7%E7%B4%A2%E5%BC%95%E4%B8%8A%EF%BC%9F"><span class="toc-text">思考：Insert Intention锁在加哪级索引上？</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E8%AF%BE%E5%90%8E%E6%80%9D%E8%80%83"><span class="toc-text">六、课后思考</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E8%A1%A5%E5%85%85%E7%9F%A5%E8%AF%86"><span class="toc-text">七、补充知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9F%A5%E7%9C%8B%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-text">1. 查看事务隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E8%AE%BE%E7%BD%AE%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="toc-text">2. 设置隔离级别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E6%9F%A5%E7%9C%8Bauto-increment%E6%9C%BA%E5%88%B6%E6%A8%A1%E5%BC%8F"><span class="toc-text">3. 查看auto_increment机制模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E6%9F%A5%E7%9C%8B%E8%A1%A8%E7%8A%B6%E6%80%81"><span class="toc-text">4. 查看表状态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E6%9F%A5%E7%9C%8BSQL%E6%80%A7%E8%83%BD"><span class="toc-text">5. 查看SQL性能</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-%E6%9F%A5%E7%9C%8B%E5%BD%93%E5%89%8D%E6%9C%80%E6%96%B0%E4%BA%8B%E5%8A%A1ID"><span class="toc-text">6. 查看当前最新事务ID</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#7-%E6%9F%A5%E7%9C%8B%E4%BA%8B%E5%8A%A1%E9%94%81%E7%AD%89%E5%BE%85%E7%8A%B6%E6%80%81%E6%83%85%E5%86%B5"><span class="toc-text">7. 查看事务锁等待状态情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#8-%E6%9F%A5%E7%9C%8Binnodb%E7%8A%B6%E6%80%81-%E5%8C%85%E5%90%AB%E6%9C%80%E8%BF%91%E7%9A%84%E6%AD%BB%E9%94%81%E6%97%A5%E5%BF%97"><span class="toc-text">8. 查看innodb状态(包含最近的死锁日志)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AB%E3%80%81%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="toc-text">八、参考文档</span></a></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <!-- <a href="#" class="fa fa-qzone bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a> -->
+            <!-- <a href="#" class="fa fa-renren bds_renren" data-cmd="renren" title="分享到人人网"></a> -->
+            <!-- <a href="#" class="fa fa-tencent-weibo bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a> -->
+            <!-- <a href="#" class="fa fa-count bds_count" data-cmd="count"></a> -->
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></i></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"mysql insert锁机制　| 芳草地　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+      <div class="duoshuo" id="comments">
+    <div id="comment-box" ></div>
+    <div class="ds-thread" id="ds-thread" data-thread-key="article/database/mysql insert锁机制/" data-title="mysql insert锁机制" data-url="http://yeshaoting.cn/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/"></div>
+    <script>
+        var duoshuoQuery = {short_name:"yeshaoting"};
+        var loadComment = function(){
+            var d = document, s = d.createElement('script');
+            s.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+            s.async = true; s.charset = 'UTF-8';
+            (d.head || d.body).appendChild(s);
+        }
+
+        
+    </script>
+    
+    <script> loadComment(); </script>
+
+</div>
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/article/database/mysql%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6/" title="上一篇: mysql前缀索引大小限制">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/article/java/request%20entity%20too%20large/" title="下一篇: request entity too large">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/article/python/Python%E8%8F%9C%E9%B8%9F%E6%95%99%E7%A8%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 循环语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/soft/tools/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8xmind%E9%B1%BC%E9%AA%A8%E5%A4%B4/">如何使用xmind鱼骨头</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E5%9B%BE%E7%89%87%E5%8D%A0%E4%BD%8D%E7%AC%A6placeholder.js/">图片占位符placeholder.js</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/samba%E6%90%AD%E5%BB%BA/">samba搭建</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/chrome%E6%8F%92%E4%BB%B6%EF%BC%9A%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87%E6%AC%A3%E8%B5%8F/">chrome插件：随机图片欣赏</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%91%BD%E4%BB%A4%E8%A1%8C%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7Innotop/">命令行监控工具Innotop</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E8%AE%BE%E7%BD%AE%E7%B3%BB%E7%BB%9Fhistory/">设置系统history</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/%E4%BB%A3%E7%A0%81%E9%AB%98%E4%BA%AE%E7%B1%BB%E5%BA%93prismjs/">代码高亮类库prismjs</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/yelee%E4%B8%BB%E9%A2%98%E6%9C%80%E8%BF%91%E8%AE%BF%E5%AE%A2%E6%8C%82%E4%BB%B6/">yelee主题最近访客挂件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/java%E8%8C%83%E5%9B%B4%E6%98%A0%E5%B0%84/">java范围映射</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E9%80%9A%E8%BF%87InnoDB%E7%9B%91%E6%8E%A7%E7%8A%B6%E6%80%81%E5%88%86%E6%9E%90%E9%94%81%E5%8D%A0%E7%94%A8/">通过InnoDB监控状态分析锁占用</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E5%BC%80%E5%90%AFInnoDB%E7%9B%91%E6%8E%A7/">开启InnoDB监控</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E5%89%8D%E7%BC%80%E7%B4%A2%E5%BC%95%E5%A4%A7%E5%B0%8F%E9%99%90%E5%88%B6/">mysql前缀索引大小限制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%20insert%E9%94%81%E6%9C%BA%E5%88%B6/">mysql insert锁机制</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/request%20entity%20too%20large/">request entity too large</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/XtraFinder%20in%2010.11/">XtraFinder in 10.11</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/%E4%B8%AD%E6%AD%A2%E9%94%99%E8%AF%AF%E7%9A%84%E5%A4%9A%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C/">中止错误的多行SQL语句执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/xml.etree.ElementTree%E8%A7%A3%E6%9E%90xml/">xml.etree.ElementTree解析xml</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%20520/">python 520</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5/">Python菜鸟教程学习笔记 - 条件语句</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%8F%98%E9%87%8F%E7%B1%BB%E5%9E%8B/">Python菜鸟教程学习笔记 - 数据类型</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/">Python菜鸟教程学习笔记 - 基础语法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/%E3%80%8A%E8%B7%9F%E8%80%81%E9%BD%90%E5%AD%A6Python%E3%80%8B%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-%E6%95%B0/">《跟老齐学Python》学习笔记-数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/python/python%E6%89%93%E5%8D%B0%E4%B8%AD%E6%96%87%E5%BC%82%E5%B8%B8/">python打印中文异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/Sublime%20Text%203%E5%BA%8F%E5%88%97%E5%8F%B7/">Sublime Text 3序列号</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/jquery%E5%A6%82%E4%BD%95%E4%BC%A0%E8%BE%93json%E6%95%B0%E6%8D%AE/">jquery如何传输json数据</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E6%B8%97%E9%80%8F%E5%88%86%E4%BA%AB/">WEB安全渗透分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E5%BE%AA%E7%8E%AF%E6%8C%87%E5%AE%9A%E6%AC%A1%E6%95%B0/">angularjs循环指定次数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E7%94%9F%E6%88%90javadoc%E6%96%87%E6%A1%A3/">生成javadoc文档</a></li><li class="post-list-item"><a class="post-list-link" href="/article/js/angularjs%E8%A7%86%E5%9B%BE%E8%B7%B3%E8%BD%AC%E4%B8%8D%E5%88%B7%E6%96%B0%E9%97%AE%E9%A2%98/">angularjs视图跳转不刷新问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/security/WEB%E5%AE%89%E5%85%A8%E5%88%9D%E6%8E%A2%E4%B9%8BXSS/">WEB安全初探之XSS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/maven%E4%B8%8D%E5%90%8C%E7%8E%AF%E5%A2%83%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6%E6%89%93%E5%8C%85/">maven不同环境资源文件打包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E8%BF%87%E6%BB%A4%E5%80%BC%E4%B8%BAnull%E7%9A%84JSON%E5%AD%97%E6%AE%B5/">spring过滤值为null的JSON字段</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/Syntax%20error-%20%22(%22%20unexpected/">Syntax error- "(" unexpected</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/EL%20access%20a%20map%20value%20by%20Integer%20key/">EL access a map value by Integer key</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/el%E6%95%B0%E5%80%BC%E8%BF%90%E7%AE%97%E5%8F%96%E6%95%B4/">el数值运算取整</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/tomcat%E8%AE%BF%E9%97%AE%E7%B3%BB%E7%BB%9F%E6%96%87%E4%BB%B6%E5%8F%8A%E6%96%87%E4%BB%B6%E5%A4%B9/">tomcat访问系统文件及文件夹</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ssh_exchange_identification-%20Connection%20closed%20by%20remote%20host/">Connection closed by remote host</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/mvc-view-controller%E7%94%A8%E6%B3%95/">mvc-view-controller用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/%E6%B3%A8%E8%A7%A3%E5%88%87%E9%9D%A2%E7%BC%BA%E5%B0%91%E6%B3%A8%E8%A7%A3%E5%8F%82%E6%95%B0/">注解切面缺少注解参数</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E5%AE%B9%E5%99%A8%E6%A0%87%E7%AD%BE%E5%89%8D%E7%BC%80/">spring容器标签前缀</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%A4%9A%E4%BB%93%E5%BA%93%E9%85%8D%E7%BD%AE/">git多仓库配置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/High%E4%B8%80%E4%B8%8B/">High一下</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E9%9B%86%E6%88%90%E7%99%BE%E5%BA%A6%E5%88%86%E4%BA%AB/">jacman主题集成百度分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/jacman%E4%B8%BB%E9%A2%98%E5%BC%80%E5%90%AFjiathis%E5%88%86%E4%BA%AB/">jacman主题开启jiathis分享</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/vim%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BAejs%E6%A0%BC%E5%BC%8F%E5%86%85%E5%AE%B9/">vim高亮显示ejs格式内容</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Charles%E4%BD%BF%E7%94%A8%E6%89%8B%E8%AE%B0/">Charles使用手记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E6%96%87%E4%BB%B6%E9%81%8D%E5%8E%86%E9%80%89%E5%8F%96%E8%84%9A%E6%9C%AC/">文件遍历选取脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/%E4%BA%86%E8%A7%A3IFS/">了解IFS</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E4%BD%BF%E7%94%A8%E8%BF%9B%E9%98%B6/">hexo使用进阶</a></li><li class="post-list-item"><a class="post-list-link" href="/article/shell/shell%E5%85%B3%E8%81%94%E6%95%B0%E7%BB%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/">shell关联数组基本用法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E5%8D%87%E7%BA%A7mac%20bash%E5%88%B04.3%E7%89%88%E6%9C%AC/">升级mac bash到4.3版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/%E6%89%93%E9%80%A0%E4%B8%AA%E4%BA%BA%E4%B8%93%E5%B1%9ESublime%20Text%203/">打造个人专属Sublime Text 3</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">Linux命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/mac/Mac%E8%BD%AF%E4%BB%B6%E6%9B%B4%E6%96%B0%E4%B8%80/">Mac装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/%E8%87%AA%E5%AE%9A%E4%B9%89taglib/">自定义taglib</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hello-world/">Hello World</a></li><li class="post-list-item"><a class="post-list-link" href="/article/hexo/hexo%E6%90%AD%E5%BB%BAgithub%E5%8D%9A%E5%AE%A2/">hexo搭建github博客</a></li><li class="post-list-item"><a class="post-list-link" href="/article/cache/redis%E5%8D%95%E6%9C%BA%E5%A4%9A%E5%AE%9E%E4%BE%8B%E9%83%A8%E7%BD%B2/">redis单机多实例部署</a></li><li class="post-list-item"><a class="post-list-link" href="/article/database/mysql%E6%95%B0%E6%8D%AE%E5%BA%93%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">mysql数据库命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E5%91%BD%E4%BB%A4%E5%B0%8F%E8%AE%B0/">git命令小记</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/git%E6%8B%89%E5%8F%96submodule/">git拉取submodule</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8git%E5%9B%9E%E9%80%80%E9%83%A8%E5%88%86%E4%BF%AE%E6%94%B9/">回滚git代码版本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/git/%E6%8E%A8%E9%80%81%E6%9C%AC%E5%9C%B0git%E4%BB%93%E5%BA%93/">推送本地git仓库</a></li><li class="post-list-item"><a class="post-list-link" href="/article/java/velocity%E5%AE%8F%E6%96%87%E4%BB%B6macro.vm%E7%BC%BA%E5%A4%B1/">velocity宏文件macro.vm缺失</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%B8%AD%E6%96%87%E4%B9%B1%E7%A0%81%E4%B8%8E%E6%9C%8D%E5%8A%A1%E5%90%AF%E5%8A%A8/">jenkins中文乱码与服务启动</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E4%BB%BB%E5%8A%A1%E7%AD%89%E5%BE%85%E4%B8%8B%E4%B8%80%E6%AC%A1%E5%8F%AF%E7%94%A8%E6%89%A7%E8%A1%8C/">jenkins任务等待下一次可用执行</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E6%8F%92%E4%BB%B6buildpipeline%E6%95%B0%E5%80%BC%E8%A7%A3%E6%9E%90%E5%BC%82%E5%B8%B8/">jenkins build-pipeline-plugin 数值解析异常</a></li><li class="post-list-item"><a class="post-list-link" href="/article/jenkins/jenkins%E8%8A%82%E7%82%B9%E9%87%8D%E5%90%AF%E8%84%9A%E6%9C%AC/">jenkins节点重启脚本</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Linux%E5%AE%89%E8%A3%85%E6%9E%81%E7%82%B9%E4%BA%94%E7%AC%94%E7%9A%84%E6%96%B9%E6%B3%95/">Linux安装极点五笔的方法</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/Ubuntu%E6%9B%B4%E6%94%B9%E6%88%AA%E5%9B%BE%E9%BB%98%E8%AE%A4%E4%BF%9D%E5%AD%98%E4%BD%8D%E7%BD%AE/">Ubuntu更改截图默认保存位置</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/linux%E5%AE%89%E8%A3%85nginx/">linux安装nginx</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/ubuntu%E8%A3%85%E6%9C%BA%E8%BD%AF%E4%BB%B6/">ubuntu装机软件</a></li><li class="post-list-item"><a class="post-list-link" href="/article/linux/%E5%80%9F%E5%8A%A9fiddler%E6%8A%93%E5%8C%85/">借助fiddler抓包</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%20mvc%20service%E5%AE%9E%E4%BE%8B%E5%8C%96%E4%BA%8C%E6%AC%A1%E9%97%AE%E9%A2%98/">spring mvc service实例化二次问题</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E6%95%B4%E5%90%88%E5%AE%9E%E8%B7%B5%20-%20velocity/">spring整合实践 - velocity</a></li><li class="post-list-item"><a class="post-list-link" href="/article/spring/spring%E7%89%B9%E6%80%A7%E5%AE%9E%E8%B7%B5%20-%20AOP/">spring特性实践 - AOP</a></li><li class="post-list-item"><a class="post-list-link" href="/article/tool/%E5%9C%A8%E7%BA%BF%E7%BD%91%E7%AB%99%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7/">在线网站性能测试工具</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2015-2021 yeshaoting
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit"  title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+
+    
+        
+            <script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+        
+        
+    
+
+    
+        
+            <!--cnzz tongji-->
+<script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan style='display:none;' id='cnzz_stat_icon_1257660126'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1257660126%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));</script>
+<!--cnzz tongji-->
+
+        
+        
+    
+</footer>
+
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-74356889-1', 'auto');
+ga('send', 'pageview');
+
+</script>
+<!-- End Google Analytics -->
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
